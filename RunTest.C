@@ -37,9 +37,12 @@ void RunTest()
   while ((objstr=(TObjString*)next())){
     TString str=(objstr->GetString()).Append(".cxx++g");
     gROOT->LoadMacro(str.Data());
+    //TString str2=(objstr->GetString()).Append("_cxx.so");
+    //Printf("Loading %s", str2.Data());
+    //gROOT->LoadClass(str2.Data());
   }
 
-  if (1){
+  if (0){
     const Int_t nvars = 3;
     Int_t nbins[nvars]={3,3,3};
     Double_t *binning[nvars];
@@ -50,9 +53,9 @@ void RunTest()
     binning[1]=bins2;
     binning[2]=bins3;
     const char* axistitle[nvars];
-    axistitle[0]="Primo asse";
-    axistitle[1]="Secondo asse";
-    axistitle[2]="Terzo asse";
+    axistitle[0]="First axis";
+    axistitle[1]="Second axis";
+    axistitle[2]="Third axis";
     const char* axisname[nvars];
     axisname[0]="axis1";
     axisname[1]="axis2";
@@ -73,13 +76,21 @@ void RunTest()
     TH2D *heff=cont->GetEfficiency2D();
     new TCanvas();
     heff->DrawCopy();
-  } else {      
-    AliHFJetContainerVertex *cont= new AliHFJetContainerVertex("Dummy");
+  } else if (1){  
+    //AliHFJetContainer *cont= new AliHFJetContainer("Dummy");
+    AliHFJetsContainerVertex *cont1= new AliHFJetsContainerVertex("cont1",AliHFJetsContainerVertex::kJets);
+    AliHFJetsContainerVertex *cont2= new AliHFJetsContainerVertex("cont2",AliHFJetsContainerVertex::kBJets);
+    Double_t point[13]={1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.};
+    TArrayD *apoint = new TArrayD(13,point);
+    cont2->FillStep(0,apoint);
     //new TCanvas();
     //cont->ResetAxisStep(AliHFJetContainer::kCFMult, AliHFJetContainer::kCFStepAll);
-    //TH1D *h2 = cont->Project1D(AliHFJetContainer::kCFStepAll, AliHFJetContainer::kCFMult);
-    //h2->DrawCopy();
+    TH1D *h2 = cont2->Project1D(AliHFJetsContainer::kCFStepAll, "kCFMult");
+    h2->DrawCopy();
 
+    TFile *f = new TFile("file.root","RECREATE");
+    cont2->Write();
+    f->Close();
     // Vecchia versione
     //AliCFContainer *cf2 =(AliCFContainer*)cont->GetContainerPrimVtx();
     //Double_t point[13]={0.5,0.5,0.5,3,0,1,2,3,0.5,0.1,0.1,0.1,0.5};

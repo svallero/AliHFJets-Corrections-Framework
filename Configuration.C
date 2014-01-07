@@ -8,8 +8,8 @@ TString pluginmode="test";
 TString name="AnalysisBjets";
 // packages
 TString api="V1.1x";
-TString root="v5-34-08";
-TString aliroot="v5-05-36-AN";
+TString root="v5-34-11";
+TString aliroot="v5-05-45-AN";
 TString boost="boost::v1_51_0";
 TString cgal="cgal::v4.0.2";
 TString fastjet="fastjet::v3.0.3";
@@ -28,8 +28,9 @@ TString loaddylibs=("libCGAL libfastjet libsiscone libsiscone_spherical libfastj
 TString loadlibs=("libJETAN libFASTJETAN libPWGTools libPWGflowBase libPWGflowTasks libPWGmuon libPWGHFbase libPWGHFvertexingHF libFASTJETAN libPWGJE");
 
 // --- analysis sources -----------
-TString sources=("AliHFJetContainer AliRDHFJetsCuts AliRDHFJetsCutsVertex AliHFJetVertexTagging AliAnalysisTaskSEHFJets");
+//TString sources=("AliHFJetContainer AliRDHFJetsCuts AliRDHFJetsCutsVertex AliHFJetVertexTagging AliAnalysisTaskSEHFJets");
 
+TString sources=("AliRDHFJetsCuts AliRDHFJetsCutsVertex AliHFJetsTagging AliHFJetsTaggingVertex AliHFJetsContainer AliHFJetsContainerVertex AliAnalysisTaskSEHFJets");
 
 void AddTasks(){
 
@@ -40,10 +41,17 @@ void AddTasks(){
 
   gROOT->LoadMacro("AddTaskJetCluster.C");
   AliAnalysisTaskJetCluster *taskCl = 0;
-  taskCl = AddTaskJetCluster("AOD","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.4,0,kTRUE,"AliAOD.Jets.root",0.15,fTrackEtaWindow);
+  taskCl = AddTaskJetCluster("AOD","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.4,0,kTRUE,"",0.15,fTrackEtaWindow);
+  // MC charged with full eta window (5)
+  taskCl = AddTaskJetCluster("AODMC2","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.4,0,kTRUE,"",0.15,fTrackEtaWindow);
+  // MC charged with restricted eta window
+  taskCl = AddTaskJetCluster("AODMC2b","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.4,0,kTRUE,"",0.15,fTrackEtaWindow);
 
   // BTagging 
   gROOT->LoadMacro("AddTaskSEHFJets.C");
   AliAnalysisTaskSEHFJets* taskJet=AddTaskSEHFJets("standard",2,"","c",0);
+  // Do not cut on max centrality
+  //AliAnalysisTaskSEHFJets* taskJet=AddTaskSEHFJets("standard",2,"","c",0, 1000);
+
 
 }

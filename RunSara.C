@@ -7,6 +7,7 @@ void RunSara()
   TString mode = "local";
 
   // Load configuration
+  //gROOT->LoadMacro("ConfigurationOrig.C");
   gROOT->LoadMacro("Configuration.C");
 
   // Set paths
@@ -40,6 +41,7 @@ void RunSara()
   AliAnalysisManager *mgr  = new AliAnalysisManager("My Manager","My Manager");
   mgr->SetDebugLevel(10);
 
+
   // Create AlienHandler (if "grid")
   AliAnalysisGrid *alienHandler;
   if (mode == "grid"){
@@ -61,6 +63,12 @@ void RunSara()
   //Cretae InputHandler 
   AliAODInputHandler *inputHandler = new AliAODInputHandler("handler","handler for HFCJ");
   mgr->SetInputEventHandler(inputHandler);
+  
+  // AOD handler
+  //AliAODHandler* aodHandler   = new AliAODHandler();
+  //aodHandler->SetOutputFileName("AliAOD.root");
+  //mgr->SetOutputEventHandler(aodHandler);
+  //mgr->GetCommonInputContainer()->SetSpecialOutput();
 
   // Load analysis sources locally
   arr = sources.Tokenize(" ");
@@ -75,8 +83,8 @@ void RunSara()
 
   if(!mgr->InitAnalysis()) return;
   mgr->PrintStatus();
-  mgr->StartAnalysis(mode, chainAOD);
-
+  mgr->StartAnalysis(mode, chainAOD,10);
+  //mgr->StartAnalysis(mode, chainAOD);
   return;
 }
 
@@ -139,8 +147,8 @@ AliAnalysisGrid* CreateAlienHandler(){
   TIter next(arr);
   while ((objstr=(TObjString*)next())){
     TString str;
-    //if (pluginmode == "test") str.Form("%s.dylib ",(objstr->GetString()).Data());
-    //else str.Form("%s.so ",(objstr->GetString()).Data()); 
+    if (pluginmode == "test") str.Form("%s.dylib ",(objstr->GetString()).Data());
+    else str.Form("%s.so ",(objstr->GetString()).Data()); 
     str.Form("%s.so ",(objstr->GetString()).Data()); 
     addlibs.Append(str.Data()); 
   }
