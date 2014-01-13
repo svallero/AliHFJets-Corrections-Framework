@@ -598,12 +598,14 @@ void AliRDHFJetsCuts::IsDaugElectron(AliAODEvent *aod, const AliAODJet *jet, Boo
      AliESDtrack *esdTrack = new AliESDtrack(aodtrack);
 
      //Double_t fClsE = -999, p = -999, fEovp=-999, pt = -999, fdEdx=-999, fTPCnSigma=0, charge=-99;
-     Double_t fClsE = -999, p = -999, fEovp=-999, pt = -999, fdEdx=-999, charge=-99;
+     //Double_t fClsE = -999, p = -999, fEovp=-999, pt = -999, fdEdx=-999, charge=-99;
+     //Double_t fClsE = -999, p = -999, fEovp=-999, fdEdx=-999, charge=-99;
+     Double_t fClsE = -999, p = -999, fEovp=-999, fdEdx=-999;
     // Track extrapolation to EMCAL
     Int_t fClsId = esdTrack->GetEMCALcluster();
     p = esdTrack->P();
-    pt = esdTrack->Pt();
-    charge = esdTrack->Charge();
+    //pt = esdTrack->Pt();
+    //charge = esdTrack->Charge();
 
     if(fClsId >0) {
     AliVCluster *cluster = aod->GetCaloCluster(fClsId);

@@ -44,13 +44,13 @@ class AliHFJetsContainerVertex : public AliHFJetsContainer
   virtual void Copy(TObject& c) const;
 
   // Methods imported from task AliAnalysisTaskSEHFJets (A. Rossi)
-  virtual void FillStepJets(AliHFJetsContainer::CFSteps step=kCFStepAll, Int_t mult=0, const AliAODJet *jet=0x0,Int_t p[3]=0x0,Double_t contr=0,Double_t pt[3]=0x0);
+  virtual void FillStepJets(AliHFJetsContainer::CFSteps step=kCFStepAll, Double_t mult=0, const AliAODJet *jet=0x0,Double_t p[3]=0x0,Double_t contr=0,Double_t pt[3]=0x0);
 
-  virtual void FillStepQaVtx(AliHFJetsContainer::CFSteps step=kCFStepAll, Int_t mult=0, const AliAODJet *jet=0x0, const TClonesArray *vertices=0x0, Double_t* disp=0x0,Int_t nvtx=0,const AliAODVertex *primVtx=0x0,const TClonesArray *mcPart=0x0,Int_t p[3]=0x0);
+  virtual void FillStepQaVtx(AliHFJetsContainer::CFSteps step=kCFStepAll, Double_t mult=0, const AliAODJet *jet=0x0, const TClonesArray *vertices=0x0, Double_t* disp=0x0,Int_t nvtx=0,const AliAODVertex *primVtx=0x0,const TClonesArray *mcPart=0x0,Double_t p[3]=0x0);
 
-  virtual void FillStepJetVtx(AliHFJetsContainer::CFSteps step=kCFStepAll, Int_t mult=0, const AliAODJet *jet=0x0, const TClonesArray *vertices=0x0, Int_t nvtx=0,const AliAODVertex *primVtx=0x0,const TClonesArray *mcPart=0x0,Int_t p[3]=0x0);
+  virtual void FillStepJetVtx(AliHFJetsContainer::CFSteps step=kCFStepAll, Double_t mult=0, const AliAODJet *jet=0x0, const TClonesArray *vertices=0x0, Int_t nvtx=0,const AliAODVertex *primVtx=0x0,const TClonesArray *mcPart=0x0,Double_t p[3]=0x0);
 
-  virtual void FillStepBJets(AliHFJetsContainer::CFSteps step=kCFStepAll, Int_t mult=0, const AliAODJet *jet=0x0,Int_t nvtx=0,Int_t partonnat[3]=0x0, Double_t contribution=0.,Double_t ptpart=0.);
+  virtual void FillStepBJets(AliHFJetsContainer::CFSteps step=kCFStepAll, Double_t mult=0, const AliAODJet *jet=0x0,Int_t nvtx=0,Double_t partonnat[3]=0x0, Double_t contribution=0.,Double_t ptpart=0.);
 
   //AliHFJetsContainer* GetContainer() { return fContainer; }
   //void SetContainer(AliHFJetsContainer* hist) { fContainer = hist; }
@@ -60,7 +60,7 @@ protected:
   AliHFJetsTaggingVertex *fTagger;  // to use tagging methods       
   //AliCFContainer* fContainer;    // custom container 
   void CreateContainerVertex(ContType contType=kJets); // create containers belonging to this class
-  Double_t* GetBinningVertex(TString var, Int_t& nBins, const char*& axistitle); // returns array of bin limts for relevant vars
+  void GetBinningVertex(TString var, Int_t& nBins,Double_t * bins, const char*& axistitle); // returns array of bin limts for relevant vars
   
   ClassDef(AliHFJetsContainerVertex, 1)    // containers for HF b-jets analysis
 };

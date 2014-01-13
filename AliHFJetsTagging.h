@@ -38,6 +38,9 @@ class AliHFJetsTagging : public TNamed {
   AliHFJetsTagging();
   AliHFJetsTagging(const char* name);
   ~AliHFJetsTagging();
+  // Assignment operator
+  AliHFJetsTagging& operator=(const AliHFJetsTagging& corr);
+
 
   // NOT IMPLEMENTED
   //virtual Bool_t IsHFJet(const AliAODJet *jet);  

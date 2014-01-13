@@ -40,6 +40,8 @@ class AliHFJetsTaggingVertex : public AliHFJetsTagging {
   AliHFJetsTaggingVertex();
   AliHFJetsTaggingVertex(const char* name);
   ~AliHFJetsTaggingVertex();
+  // Assignment operator
+  AliHFJetsTaggingVertex& operator=(const AliHFJetsTaggingVertex& corr);
 
   Int_t FindVertices(const AliAODJet *jet,AliAODEvent* aod, AliESDVertex* v1, Double_t magzkG ,TClonesArray *arrVertices, Double_t *arrDispersion);
   AliAODVertex* ReconstructSecondaryVertex(TObjArray *trkArray, AliESDVertex* v1, Double_t magzkG ,Double_t &dispersion) const;

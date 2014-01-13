@@ -73,13 +73,13 @@ AliAnalysisTaskSEHFJets::AliAnalysisTaskSEHFJets()
   fhBJets(0),
   fhJetVtx(0),
   fReadMC(0),
-  fCutsHFjets(0x0),
-  fTagger(0x0),
-  fbJetArray(0x0),
+  fCutsHFjets(0),
+  fTagger(0),
+  fbJetArray(0),
   fRecoJetsBranch(""),
   fMcJetsBranch(""),
   fCorrMode(kTRUE),
-  fArrayMC(0x0)
+  fArrayMC(0)
 {
 
   // default constructor
@@ -96,13 +96,13 @@ AliAnalysisTaskSEHFJets::AliAnalysisTaskSEHFJets(const char *name)
   fhBJets(0),
   fhJetVtx(0),
   fReadMC(0),
-  fCutsHFjets(0x0),
-  fTagger(0x0),
-  fbJetArray(0x0),
+  fCutsHFjets(0),
+  fTagger(0),
+  fbJetArray(0),
   fRecoJetsBranch(""),
   fMcJetsBranch(""),
   fCorrMode(kTRUE),
-  fArrayMC(0x0)
+  fArrayMC(0)
 { 
   // standard constructor
 
@@ -121,6 +121,7 @@ AliAnalysisTaskSEHFJets::~AliAnalysisTaskSEHFJets(){
 
   delete fCutsHFjets;
   delete fTagger;
+  fTagger = 0;
   fbJetArray->Delete();
   delete fbJetArray;
   delete fhJets;
@@ -136,7 +137,7 @@ void AliAnalysisTaskSEHFJets::Init()
 {
   // Initialization
   AliLog::SetGlobalDebugLevel(AliLog::kError);
-
+  if (!fTagger)fTagger = new AliHFJetsTaggingVertex();
 }
 
 
@@ -252,7 +253,7 @@ void AliAnalysisTaskSEHFJets::UserExec(Option_t */*option*/){
       //if(ntrksMC<3)continue;
 
       // Get jet flavour from 3 methods
-      Int_t partonnatMC[3];
+      Double_t partonnatMC[3];
       Double_t ptpartMC[3];
       Double_t contributionMC=0;
       // contribution = pT weight of mother parton (only method 1)
@@ -331,9 +332,9 @@ void AliAnalysisTaskSEHFJets::UserExec(Option_t */*option*/){
       continue;
     }
 
-    Int_t partonnat[3]={0,0,0};
-    Double_t ptpart[3]={-1,-1,-1};
-    Double_t contribution=0;
+    Double_t partonnat[3]={0.,0.,0.};
+    Double_t ptpart[3]={-1.,-1.,-1.};
+    Double_t contribution=0.;
     // contribution = pT weight of mother parton (only method 1)
 
     if(fReadMC){ // THIS MAKES SENSE ONLY FOR MC
@@ -376,7 +377,7 @@ void AliAnalysisTaskSEHFJets::UserExec(Option_t */*option*/){
     }
 
     TRefArray* reftracks=(TRefArray*)jet->GetRefTracks();
-    Int_t ntrks=reftracks->GetEntriesFast();
+    Double_t ntrks=reftracks->GetEntriesFast();
     // Asking for at leas 2 tracks in the jet
     if(ntrks<3)continue;
 
@@ -413,6 +414,16 @@ void AliAnalysisTaskSEHFJets::UserExec(Option_t */*option*/){
 
   //delete v1;
   //delete fArrayMC; 
+  delete fCutsHFjets;
+  delete fTagger;
+  fbJetArray->Delete();
+  delete fbJetArray;
+  delete fhJets;
+  delete fhQaVtx;
+  delete fhBJets;
+  delete fhJetVtx;
+  delete fArrayMC;
+delete aod;
 
 }
 
@@ -424,7 +435,7 @@ void AliAnalysisTaskSEHFJets::Terminate(const Option_t*){
 }
 
 
-void AliAnalysisTaskSEHFJets::GetFlavour3Methods(AliAODJet *jet, Int_t (&partonnat)[3], Double_t (&ptpart)[3], Double_t &contribution){
+void AliAnalysisTaskSEHFJets::GetFlavour3Methods(AliAODJet *jet, Double_t (&partonnat)[3], Double_t (&ptpart)[3], Double_t &contribution){
 
     // 3 methods  to associate jet to mother parton
 

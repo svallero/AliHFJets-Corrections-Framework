@@ -55,7 +55,8 @@ class AliAnalysisTaskSEHFJets : public AliAnalysisTaskSE {
 
   void SetReadMC(Int_t readMC){fReadMC=readMC;}
   void SetCuts(AliRDHFJetsCuts *cuts){delete fCutsHFjets; fCutsHFjets=new AliRDHFJetsCuts(*cuts);}
-  void SetTagger(AliHFJetsTaggingVertex *tagger){fTagger=new AliHFJetsTaggingVertex(*tagger);}
+  //void SetTagger(AliHFJetsTaggingVertex *tagger){fTagger=new AliHFJetsTaggingVertex(*tagger);}
+  void SetTagger(AliHFJetsTaggingVertex *tagger){fTagger=tagger;}
 
  private:
   AliHFJetsContainerVertex *fhJets;    // reco jet properties             
@@ -65,7 +66,7 @@ class AliAnalysisTaskSEHFJets : public AliAnalysisTaskSE {
   AliAnalysisTaskSEHFJets(const AliAnalysisTaskSEHFJets&); // copy constructo not implemented yet
   AliAnalysisTaskSEHFJets& operator=(const AliAnalysisTaskSEHFJets&); // assignment operator not implemented yet
 
-  void GetFlavour3Methods(AliAODJet *jet, Int_t (&partonnat)[3], Double_t (&ptpart)[3], Double_t &contribution);
+  void GetFlavour3Methods(AliAODJet *jet, Double_t (&partonnat)[3], Double_t (&ptpart)[3], Double_t &contribution);
 
   Int_t fReadMC;                       // 0=no read mc, 1=is MC but analysis is data-like, 2=MC based analysis
   TH1F *fNentries;                     //! histo for event counting and checks

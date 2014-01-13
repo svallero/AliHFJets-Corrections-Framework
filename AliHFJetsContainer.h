@@ -100,7 +100,8 @@ class AliHFJetsContainer : public TNamed
   const char* GetStepName(CFSteps step); // returns name of enum
   const char* GetVarName(CFVars var);    // returns name of enum
   Int_t GetVarAxis(const char* varname); // returns axis ID given the variable name
-  Double_t *GetBinning(TString var, Int_t& nBins, const char*& axistitle); // returns array of bin limts for relevant vars
+  //Double_t *GetBinning(TString var, Int_t& nBins, const char*& axistitle); // returns array of bin limts for relevant vars
+  void GetBinning(TString var, Int_t& nBins, Double_t* bins, const char*& axistitle); // returns array of bin limts for relevant vars
   void SetStepNames(AliCFContainer* container); // sets analysis step names
   const char* GetStepTitle(CFSteps step); // gets analysis step names
   TH1* StepsRatio(CFSteps num, CFSteps denom, Int_t var1, Int_t var2=-1); // 1D/2D ratio between 2 steps 

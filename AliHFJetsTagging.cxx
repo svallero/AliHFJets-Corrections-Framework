@@ -47,6 +47,16 @@ AliHFJetsTagging::~AliHFJetsTagging(){
   delete fSelectedTracks;
 }
 
+AliHFJetsTagging &AliHFJetsTagging::operator=(const AliHFJetsTagging &c)
+{
+  // assigment operator
+
+  if (this != &c)
+    ((AliHFJetsTagging &) c).Copy(*this);
+
+  return *this;
+}
+
 //Bool_t AliHFJetsTagging::IsHFJet(const AliAODJet *jet){
 //  // METHOD NON IMPlEMENTED
 //  return kFALSE;
@@ -107,7 +117,7 @@ AliAODMCParticle* AliHFJetsTagging::IsMCJet(TClonesArray *arrayMC,const AliAODJe
         idx.push_back(label);           //! Label  of Mother
         idx2.push_back(label);
         weight.push_back(track->Pt());  //! Weight : P_t trak /  P_t jet ... the latter used at the end
-        AliDebug(AliLog::kDebug,Form("jet pT=%f,  mother=%d, track w=%f \n",jet->Pt(),motherParton->GetPdgCode(),track->Pt()));
+        //AliDebug(AliLog::kDebug,Form("jet pT=%f,  mother=%d, track w=%f \n",jet->Pt(),motherParton->GetPdgCode(),track->Pt()));
       }
     }///END LOOP OVER REFERENCED TRACKS   
   }
@@ -146,7 +156,7 @@ AliAODMCParticle* AliHFJetsTagging::IsMCJet(TClonesArray *arrayMC,const AliAODJe
   parton=(AliAODMCParticle*)arrayMC->At(idx.at(winner));
   contribution = arrayOfWeights[winner]/jet->Pt();
 
-  if(arrayOfWeights)    delete arrayOfWeights;
+  if(arrayOfWeights)    delete [] arrayOfWeights;
 
 
   return parton;
@@ -159,10 +169,10 @@ AliAODMCParticle *AliHFJetsTagging::GetMCPartonOrigin(TClonesArray *arrayMC,AliA
   //AliAODMCParticle *p3 = 0x0, *p2=0x0;
   AliAODMCParticle *p2=0x0;
   Int_t mlabel = TMath::Abs(p->GetMother()) ; 
-  Double_t pz=0.;
+  //Double_t pz=0.;
   while(mlabel > 1){
     p2 = (AliAODMCParticle*)arrayMC->At(mlabel);
-    pz=TMath::Abs(p2->Pz());
+    //pz=TMath::Abs(p2->Pz());
 
     if( p2->PdgCode() == 21 || (p2->PdgCode() != 0 && abs(p2->PdgCode()) <6) )
     {

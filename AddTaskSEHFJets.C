@@ -92,7 +92,7 @@ AliAnalysisTaskSEHFJets* AddTaskSEHFJets(TString fileout="standard",Bool_t readm
     mgr->ConnectOutput(hfTask,i+1,containerJets[i]);
     i++;
   }
-
+  delete tagger;
   return hfTask;
 }
 

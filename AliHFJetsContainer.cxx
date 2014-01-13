@@ -57,6 +57,10 @@ AliHFJetsContainer::AliHFJetsContainer(const char* name, Bool_t dummy):
   fCustomVarNames(0x0),
   fContainer(0)
 {
+  for (Int_t k=0; k<fgkCFVars; k++){
+    fBinning[k] = new Double_t[1000];
+  }
+
   CreateDefaultBinning();
   
   if (!dummy){
@@ -66,13 +70,12 @@ AliHFJetsContainer::AliHFJetsContainer(const char* name, Bool_t dummy):
   
   
     CreateContainer("fContainerStandard", "Standard container for corrections", fgkCFVars, fNbins, fBinning, fAxisTitle);  
+  }
 
     // Delete arrays 
-    //for (Int_t k=0; k<nvars; k++){
-      //delete binning[k];
-      //delete axistitle[k];
-    //}
-  }
+  //  for (Int_t k=0; k<fgkCFVars; k++){
+  //    delete fBinning[k];
+  //  }
 }
 
 AliHFJetsContainer::AliHFJetsContainer(const char* name, const Int_t nvars, const char* varnames[], Int_t *nbins, Double_t *binning[], const char*  axistitle[]): 
@@ -81,6 +84,9 @@ AliHFJetsContainer::AliHFJetsContainer(const char* name, const Int_t nvars, cons
   fContainer(0)
 {
 
+  for (Int_t k=0; k<fgkCFVars; k++){
+    fBinning[k] = new Double_t[1000];
+  }
   CreateCustomContainer(nvars, varnames, nbins, binning, axistitle);
 
 }
@@ -108,10 +114,10 @@ AliHFJetsContainer::~AliHFJetsContainer()
     }
   
   for (Int_t k=0; k<fgkCFVars; k++){
-    //if (fBinning[k]){
-      //delete fBinning[k];
-        //fBinning[k] = 0;
-    //}
+    if (fBinning[k]){
+      delete fBinning[k];
+        fBinning[k] = 0;
+    }
     //if (fAxisTitle[k]){
       //delete fAxisTitle[k];
       //fAxisTitle[k] = 0;
@@ -196,7 +202,8 @@ void AliHFJetsContainer::CreateCustomContainer(const Int_t nvars, const char* va
   //delete fCustomVarNames;
 }
 //----------------------------------------------------------------
-Double_t* AliHFJetsContainer::GetBinning(TString var, Int_t& nBins, const char*& axistitle)
+//Double_t* AliHFJetsContainer::GetBinning(TString var, Int_t& nBins, const char*& axistitle)
+void AliHFJetsContainer::GetBinning(TString var, Int_t& nBins,Double_t* bins, const char*& axistitle)
 {
   // Assigns variable-specific bin edges 
   // (you can define array of bins "by hand" to allow for non uniform bin width) 
@@ -227,13 +234,15 @@ Double_t* AliHFJetsContainer::GetBinning(TString var, Int_t& nBins, const char*&
 
   // Define regular binning
   Double_t binwidth = (binmax-binmin)/(1.*nBins);
-  Double_t* bins = new Double_t[nBins+1];
+  //Double_t* bins = new Double_t[nBins+1];
+  //bins = new Double_t[nBins+1];
+  //Double_t bins[nBins+1];
   for (Int_t j=0; j<nBins+1; j++){
      if (j==0) bins[j]= binmin;
      else bins[j] = bins[j-1]+binwidth;
      //Printf("*** Bin %d value %f",j, bins[j]);
      }
-  return bins;
+  //return bins;
 }
 
 void AliHFJetsContainer::SetAxisRangeStep(const char* axisname, Double_t min, Double_t max, CFSteps step)
@@ -440,10 +449,15 @@ void AliHFJetsContainer::CreateDefaultBinning()
   TIter next(arr);
   Int_t i = 0;
   while ((objstr=(TObjString*)next())){
-    fBinning[i]=GetBinning(objstr->GetString(), fNbins[i], fAxisTitle[i]);
+    //fBinning[i] = new Double_t[1000];
+    //fBinning[i]=GetBinning(objstr->GetString(), fNbins[i], fAxisTitle[i]);
+    GetBinning(objstr->GetString(), fNbins[i], fBinning[i], fAxisTitle[i]);
     i++;
     }
+  delete arr;
 }
+
+
 TH1* AliHFJetsContainer::StepsRatio(CFSteps num, CFSteps denom, Int_t var1, Int_t var2)
 {
   TH1 *hnum=0;

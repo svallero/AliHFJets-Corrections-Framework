@@ -56,6 +56,7 @@ AliHFJetsTaggingVertex::AliHFJetsTaggingVertex(const char* name):
 AliHFJetsTaggingVertex::~AliHFJetsTaggingVertex(){
   if(fTrackArray) {
     //fTrackArray->Clear();
+    // SARA hack
     delete fTrackArray;
   }
   if(fCutsHFjets) 
@@ -63,6 +64,15 @@ AliHFJetsTaggingVertex::~AliHFJetsTaggingVertex(){
 
 }
 
+AliHFJetsTaggingVertex &AliHFJetsTaggingVertex::operator=(const AliHFJetsTaggingVertex &c)
+{
+  // assigment operator
+
+  if (this != &c)
+    ((AliHFJetsTaggingVertex &) c).Copy(*this);
+
+  return *this;
+}
 
 //___________________________________________________________________________
 Int_t AliHFJetsTaggingVertex::FindVertices(const AliAODJet *jet, AliAODEvent* aod, AliESDVertex* v1, Double_t magzkG , TClonesArray *arrVertices, Double_t *arrDispersion){

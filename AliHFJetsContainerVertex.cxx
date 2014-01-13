@@ -147,7 +147,8 @@ void AliHFJetsContainerVertex::CreateContainerVertex(ContType contType)
   TIter next(arr);
   Int_t i = 0;
   while ((objstr=(TObjString*)next())){
-    binning[i]=GetBinningVertex(objstr->GetString(), nbins[i], axistitle[i]);
+    binning[i]=new Double_t[1000]; 
+    GetBinningVertex(objstr->GetString(), nbins[i], binning[i], axistitle[i]);
     axisname[i]=objstr->GetName();
     i++;
     }
@@ -155,17 +156,17 @@ void AliHFJetsContainerVertex::CreateContainerVertex(ContType contType)
   AliHFJetsContainer::CreateCustomContainer(nvars,axisname,nbins, binning,axistitle);
 
   // Delete arrays 
-  arr->Clear();
-  //delete arr;
+  //arr->Clear();
+  delete arr;
   for (Int_t k=0; k<nvars; k++){
-    //delete [] binning[k];
+    delete [] binning[k];
     //delete axisname[k];
     //delete axistitle[k];
  }
 }
 
 //----------------------------------------------------------------
-Double_t* AliHFJetsContainerVertex::GetBinningVertex(TString var, Int_t& nBins, const char*& axistitle)
+void AliHFJetsContainerVertex::GetBinningVertex(TString var, Int_t& nBins, Double_t *bins,const char*& axistitle)
 {
 
   // Assigns variable-specific bin edges 
@@ -317,27 +318,26 @@ Double_t* AliHFJetsContainerVertex::GetBinningVertex(TString var, Int_t& nBins, 
 
   // Define regular binning
   Double_t binwidth = (binmax-binmin)/(1.*nBins);
-  Double_t* bins = new Double_t[nBins+1];
   for (Int_t j=0; j<nBins+1; j++){
      if (j==0) bins[j]= binmin;
      else bins[j] = bins[j-1]+binwidth;
      }
-  return bins;
+  //return bins;
 }
 
-void AliHFJetsContainerVertex::FillStepJets(AliHFJetsContainer::CFSteps step,Int_t mult, const AliAODJet *jet,Int_t p[3],Double_t contr,Double_t pt[3]){
+void AliHFJetsContainerVertex::FillStepJets(AliHFJetsContainer::CFSteps step,Double_t mult, const AliAODJet *jet,Double_t p[3],Double_t contr,Double_t pt[3]){
   
   if (fType != kJets){
     AliError(Form(RED"This method is available only for container type kJets: you are trying to fill %s!"B, strContType(fType)));
   }
 
   // here the number of electrons is not filled (after nTrk)
-  Double_t point[14]={mult,jet->Pt(),jet->Eta(),jet->Phi()-TMath::Pi(),jet->GetRefTracks()->GetEntriesFast(),0,p[0],p[1],p[2],contr,pt[0],pt[1],pt[2],jet->EffectiveAreaCharged()};
+  Double_t point[14]={mult*1.,jet->Pt(),jet->Eta(),jet->Phi()-TMath::Pi(),jet->GetRefTracks()->GetEntriesFast()*1.,0.,p[0],p[1],p[2],contr,pt[0],pt[1],pt[2],jet->EffectiveAreaCharged()};
   TArrayD *apoint=new TArrayD(14,point);
   AliHFJetsContainer::FillStep(step, apoint);
 }
 
-void AliHFJetsContainerVertex::FillStepQaVtx(AliHFJetsContainer::CFSteps step, Int_t mult, const AliAODJet *jet,const TClonesArray *vertices,Double_t* disp,Int_t nvtx,const AliAODVertex *primVtx,const TClonesArray *mcPart,Int_t p[3]){
+void AliHFJetsContainerVertex::FillStepQaVtx(AliHFJetsContainer::CFSteps step, Double_t mult, const AliAODJet *jet,const TClonesArray *vertices,Double_t* disp,Int_t nvtx,const AliAODVertex *primVtx,const TClonesArray *mcPart,Double_t p[3]){
   
   if (fType != kQaVtx){
     AliError(Form(RED"This method is available only for container type kQaVtx: you are trying to fill %s!"B, strContType(fType)));
@@ -351,7 +351,7 @@ void AliHFJetsContainerVertex::FillStepQaVtx(AliHFJetsContainer::CFSteps step, I
     jet->PxPyPz(jetP);
 
     Int_t *indexLxy=new Int_t[nvtx];
-    Double_t pointVtxProp[21]={mult,jet->Pt(),jet->Eta(),jet->Phi(),jet->GetRefTracks()->GetEntriesFast(),0.,0.,0.,0.,p[0],0,0,0,0,0,0,0,0,0,p[1],p[2]};
+    Double_t pointVtxProp[21]={mult*1.,jet->Pt(),jet->Eta(),jet->Phi(),jet->GetRefTracks()->GetEntriesFast()*1.,0.,0.,0.,0.,p[0],0,0,0,0,0,0,0,0,0,p[1],p[2]};
 
      Double_t *decLengthXY=new Double_t[nvtx];
      Double_t *invMasses=new Double_t[nvtx];
@@ -426,7 +426,7 @@ void AliHFJetsContainerVertex::FillStepQaVtx(AliHFJetsContainer::CFSteps step, I
      return;
 }
   
-void AliHFJetsContainerVertex::FillStepBJets(AliHFJetsContainer::CFSteps step, Int_t mult, const AliAODJet *jet, Int_t nvtx,Int_t partonnat[3], Double_t contribution,Double_t ptpart){
+void AliHFJetsContainerVertex::FillStepBJets(AliHFJetsContainer::CFSteps step, Double_t mult, const AliAODJet *jet, Int_t nvtx,Double_t partonnat[3], Double_t contribution,Double_t ptpart){
   
   AliInfo("Filling container kBJets.");
 
@@ -434,13 +434,13 @@ void AliHFJetsContainerVertex::FillStepBJets(AliHFJetsContainer::CFSteps step, I
     AliError(Form(RED"This method is available only for container type kBJets: you are trying to fill %s!"B, strContType(fType)));
   }
 
-  Double_t point[13]={mult, jet->Pt(),jet->Eta(),jet->Phi()-TMath::Pi(),jet->GetRefTracks()->GetEntriesFast(),nvtx,0,partonnat[0],contribution,ptpart,jet->EffectiveAreaCharged(), partonnat[1], partonnat[2]};
+  Double_t point[13]={mult*1., jet->Pt(),jet->Eta(),jet->Phi()-TMath::Pi(),jet->GetRefTracks()->GetEntriesFast()*1.,nvtx*1.,0,partonnat[0],contribution,ptpart,jet->EffectiveAreaCharged(), partonnat[1], partonnat[2]};
   //for (Int_t i=0; i<13; i++) Printf("Point %d %f", i, point[i]);
   TArrayD *apoint=new TArrayD(13,point);
   AliHFJetsContainer::FillStep(step, apoint);
 }
 
-void AliHFJetsContainerVertex::FillStepJetVtx(AliHFJetsContainer::CFSteps step, Int_t mult, const AliAODJet *jet,const TClonesArray *vertices,Int_t nvtx,const AliAODVertex *primVtx,const TClonesArray *mcPart,Int_t p[3]){
+void AliHFJetsContainerVertex::FillStepJetVtx(AliHFJetsContainer::CFSteps step, Double_t mult, const AliAODJet *jet,const TClonesArray *vertices,Int_t nvtx,const AliAODVertex *primVtx,const TClonesArray *mcPart,Double_t p[3]){
   
   if (fType != kJetVtx){
     AliError(Form(RED"This method is available only for container type kJetVtx: you are trying to fill %s!"B, strContType(fType)));
@@ -448,13 +448,13 @@ void AliHFJetsContainerVertex::FillStepJetVtx(AliHFJetsContainer::CFSteps step, 
   
     Double_t xyz[3],vtxVect[3],jetP[3];
     Double_t xyzPrim[3];
-    Double_t cosTheta;
+    //Double_t cosTheta;
 
     primVtx->GetXYZ(xyzPrim);
     jet->PxPyPz(jetP);
 
     Int_t *indexLxy=new Int_t[nvtx];
-    Double_t point[24]={mult,jet->Pt(),jet->Eta(),jet->Phi(),nvtx,0.,-1.,-1.,-1.,-1.,-1.,-1.,-1,-1,-1,-1,-1,-1,-1,-1,-1,p[0],p[1],p[2]};
+    Double_t point[24]={mult*1.,jet->Pt(),jet->Eta(),jet->Phi(),nvtx*1.,0.,-1.,-1.,-1.,-1.,-1.,-1.,-1,-1,-1,-1,-1,-1,-1,-1,-1,p[0],p[1],p[2]};
 
      Double_t *decLengthXY=new Double_t[nvtx];
      Double_t *invMasses=new Double_t[nvtx];
@@ -462,7 +462,8 @@ void AliHFJetsContainerVertex::FillStepJetVtx(AliHFJetsContainer::CFSteps step, 
      Double_t *nFromBVtx=new Double_t[nvtx];
      Double_t *nFromPromptDVtx=new Double_t[nvtx];
      Double_t xMC,yMC;
-     Double_t vtxP[3],vtxPt,signLxy;
+     //Double_t vtxP[3],vtxPt,signLxy;
+     Double_t vtxP[3],signLxy;
      Int_t nvtxMC=0;
 
      for(Int_t jj=0;jj<nvtx;jj++){
@@ -479,9 +480,9 @@ void AliHFJetsContainerVertex::FillStepJetVtx(AliHFJetsContainer::CFSteps step, 
        vtxVect[2]=xyz[2]-xyzPrim[2];
        signLxy=vtxVect[0]*jetP[0]+vtxVect[1]*jetP[1];
 
-       Double_t absJetPt=TMath::Sqrt(jetP[0]*jetP[0]+jetP[1]*jetP[1]);
-       Double_t absVtxVect=TMath::Sqrt(vtxVect[0]*vtxVect[0]+vtxVect[1]*vtxVect[1]);
-       cosTheta=signLxy/(absJetPt*absVtxVect);//angle between jet and Lxy
+       //Double_t absJetPt=TMath::Sqrt(jetP[0]*jetP[0]+jetP[1]*jetP[1]);
+       //Double_t absVtxVect=TMath::Sqrt(vtxVect[0]*vtxVect[0]+vtxVect[1]*vtxVect[1]);
+       //cosTheta=signLxy/(absJetPt*absVtxVect);//angle between jet and Lxy
 
        decLengthXY[jj]=TMath::Sqrt((xyz[0]-xyzPrim[0])*(xyz[0]-xyzPrim[0])+(xyz[1]-xyzPrim[1])*(xyz[1]-xyzPrim[1]));
        if(signLxy<0.){
@@ -489,7 +490,7 @@ void AliHFJetsContainerVertex::FillStepJetVtx(AliHFJetsContainer::CFSteps step, 
        }
         
        fTagger->GetVtxPxy(vtx,vtxP);
-       vtxPt=TMath::Sqrt(vtxP[0]*vtxP[0]+vtxP[1]*vtxP[1]);
+       //vtxPt=TMath::Sqrt(vtxP[0]*vtxP[0]+vtxP[1]*vtxP[1]);
        
        if(mcPart){
          Int_t nfromBandD=0,nfromD=0,nfromPromptD=0;

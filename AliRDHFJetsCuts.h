@@ -177,12 +177,14 @@ class AliRDHFJetsCuts : public AliAnalysisCuts
   Bool_t IsJetSelected(const AliAODJet *jet) const;
  
   //  void SetupPID(AliVEvent *event);
-  Bool_t IsSelected(TObject *obj) {return IsSelected(obj,0);}
+  //Bool_t IsSelected(TObject *obj) {return IsSelected(obj,0);}
+  Bool_t IsSelected(TObject *obj) {if(!obj) return kTRUE; return kFALSE;}
   Bool_t IsSelected(TList *list) {if(!list) return kTRUE; return kFALSE;}
 
-  virtual  Int_t IsSelected(TObject* obj,Int_t selectionLevel) {return kFALSE;}
-  virtual Int_t IsSelected(TObject* obj,Int_t selectionLevel,AliAODEvent* /*aod*/)
-  {return IsSelected(obj,selectionLevel);}
+  //virtual  Int_t IsSelected(TObject* obj,Int_t selectionLevel) {return kFALSE;}
+
+  //virtual Int_t IsSelected(TObject* obj,Int_t selectionLevel,AliAODEvent* /*aod*/)
+  //{return IsSelected(obj,selectionLevel);}
    
   //Int_t PtBin(Double_t pt) const;
   void PrintAll()const;
