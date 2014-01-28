@@ -83,8 +83,8 @@ void RunSara()
 
   if(!mgr->InitAnalysis()) return;
   mgr->PrintStatus();
-  mgr->StartAnalysis(mode, chainAOD,10);
-  //mgr->StartAnalysis(mode, chainAOD);
+  //mgr->StartAnalysis(mode, chainAOD,10);
+  mgr->StartAnalysis(mode, chainAOD);
   return;
 }
 
