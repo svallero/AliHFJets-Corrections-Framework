@@ -55,8 +55,8 @@ class AliAnalysisTaskSEHFJets : public AliAnalysisTaskSE {
 
   void SetReadMC(Int_t readMC){fReadMC=readMC;}
   void SetCuts(AliRDHFJetsCuts *cuts){delete fCutsHFjets; fCutsHFjets=new AliRDHFJetsCuts(*cuts);}
-  //void SetTagger(AliHFJetsTaggingVertex *tagger){fTagger=new AliHFJetsTaggingVertex(*tagger);}
-  void SetTagger(AliHFJetsTaggingVertex *tagger){fTagger=tagger;}
+  void SetTagger(AliHFJetsTaggingVertex *tagger){fTagger=new AliHFJetsTaggingVertex(*tagger);}
+  //void SetTagger(AliHFJetsTaggingVertex *tagger){fTagger=tagger;}
 
  private:
   AliHFJetsContainerVertex *fhJets;    // reco jet properties             

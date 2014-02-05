@@ -105,7 +105,6 @@ AliAnalysisTaskSEHFJets::AliAnalysisTaskSEHFJets(const char *name)
   fArrayMC(0)
 { 
   // standard constructor
-
   DefineOutput(1, AliHFJetsContainerVertex::Class());
   DefineOutput(2, AliHFJetsContainerVertex::Class());
   DefineOutput(3, AliHFJetsContainerVertex::Class());
@@ -118,7 +117,7 @@ AliAnalysisTaskSEHFJets::AliAnalysisTaskSEHFJets(const char *name)
 AliAnalysisTaskSEHFJets::~AliAnalysisTaskSEHFJets(){
 
   // destructor
-
+  AliInfo("Running Destructor");
   delete fCutsHFjets;
   delete fTagger;
   fTagger = 0;
@@ -137,13 +136,15 @@ void AliAnalysisTaskSEHFJets::Init()
 {
   // Initialization
   AliLog::SetGlobalDebugLevel(AliLog::kError);
-  if (!fTagger)fTagger = new AliHFJetsTaggingVertex();
+  AliInfo("Running Init");
+  //if (!fTagger)fTagger = new AliHFJetsTaggingVertex();
 }
 
 
 //________________________________________________________________________
 void AliAnalysisTaskSEHFJets::UserCreateOutputObjects(){
-
+  
+  AliInfo("Running UserCreateOutputObjects");
   // Create the containers for jet and vertex properties
   // reconstructed jets
   fhJets= new AliHFJetsContainerVertex("kJets",AliHFJetsContainerVertex::kJets);
@@ -178,6 +179,7 @@ void AliAnalysisTaskSEHFJets::UserCreateOutputObjects(){
 //________________________________________________________________________
 void AliAnalysisTaskSEHFJets::UserExec(Option_t */*option*/){
 
+  AliInfo("Running UserExec");
   // Execute analysis for current event
  
   if (fCorrMode && !fReadMC) fReadMC = kTRUE;
@@ -414,16 +416,16 @@ void AliAnalysisTaskSEHFJets::UserExec(Option_t */*option*/){
 
   //delete v1;
   //delete fArrayMC; 
-  delete fCutsHFjets;
-  delete fTagger;
-  fbJetArray->Delete();
-  delete fbJetArray;
-  delete fhJets;
-  delete fhQaVtx;
-  delete fhBJets;
-  delete fhJetVtx;
-  delete fArrayMC;
-delete aod;
+  //delete fCutsHFjets;
+  //delete fTagger;
+  //fbJetArray->Delete();
+  //delete fbJetArray;
+  //delete fhJets;
+  //delete fhQaVtx;
+  //delete fhBJets;
+  //delete fhJetVtx;
+  //delete fArrayMC;
+  //delete aod;
 
 }
 

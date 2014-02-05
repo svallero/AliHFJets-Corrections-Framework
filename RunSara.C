@@ -4,7 +4,10 @@ class AliAnalysisAlien;
 void RunSara()
 {
 
-  TString mode = "local";
+  // This macro is to run "local" or "grid"
+  // To run with PROOF see RunVaf.C
+
+  TString mode = "grid";
 
   // Load configuration
   //gROOT->LoadMacro("ConfigurationOrig.C");
@@ -83,8 +86,8 @@ void RunSara()
 
   if(!mgr->InitAnalysis()) return;
   mgr->PrintStatus();
-  //mgr->StartAnalysis(mode, chainAOD,10);
-  mgr->StartAnalysis(mode, chainAOD);
+  mgr->StartAnalysis(mode, chainAOD,10);
+  //mgr->StartAnalysis(mode, chainAOD);
   return;
 }
 
@@ -97,7 +100,7 @@ AliAnalysisGrid* CreateAlienHandler(){
   plugin->SetUser(user.Data());
 
   // General configuration
-  plugin->SetNtestFiles(100);
+  plugin->SetNtestFiles(10);
   plugin->SetAnalysisMacro(Form("%s.C",name.Data()));
   plugin->SetJDLName(Form("%s.jdl",name.Data()));
   plugin->SetExecutable(Form("%s.sh",name.Data()));
