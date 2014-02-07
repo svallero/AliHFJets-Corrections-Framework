@@ -42,17 +42,10 @@ AliAnalysisTaskSEHFJets* AddTaskSEHFJets(TString fileout="standard",Bool_t corre
 
   // Set analysis cuts
   if(!gSystem->AccessPathName(cutfile.Data(),kFileExists)){
-<<<<<<< HEAD
-     read cuts from file
-     ::Info(Form("Reading cuts from file: %s", cutfile.Data()));
-     TFile *f=TFile::Open(cutfile.Data());
-     AliRDHFJetsCuts.cxx *cuts= (AliRDHFCutsD0toKpi*)f->Get("HFJetsCutsVertex");
-=======
     // read cuts from file
     ::Info(Form("Reading cuts from file: %s", cutfile.Data()));
     TFile *f=TFile::Open(cutfile.Data());
     AliRDHFJetsCuts *cuts= (AliRDHFCutsD0toKpi*)f->Get("HFJetsCutsVertex");
->>>>>>> 1dee15b3f1681e0b28ab218380be81768f87986d
     // Set centrality 
     cuts->SetMinCentrality(minC);
     cuts->SetMaxCentrality(maxC);
@@ -99,13 +92,8 @@ AliAnalysisTaskSEHFJets* AddTaskSEHFJets(TString fileout="standard",Bool_t corre
     mgr->ConnectOutput(hfTask,i+1,containerJets[i]);
     i++;
   }
-<<<<<<< HEAD
   
   delete tagger;
-
-=======
-  //delete tagger;
->>>>>>> 1dee15b3f1681e0b28ab218380be81768f87986d
   return hfTask;
 }
 

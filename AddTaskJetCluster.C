@@ -191,15 +191,9 @@ AliAnalysisTaskJetCluster *AddTaskJetCluster(char* bRec,char* bGen ,UInt_t filte
   AliAnalysisDataContainer *coutput1_clus = mgr->CreateContainer(Form("cluster_%s_%s_%s%s",bRec,bGen,jf,cAdd.Data()), TList::Class(),AliAnalysisManager::kOutputContainer,Form("%s:PWGJE_cluster_%s_%s_%s%s",AliAnalysisManager::GetCommonFileName(),bRec,bGen,jf,cAdd.Data()));
 
    // mgr->ConnectInput  (clus, 0, mgr->GetCommonInputContainer());
-<<<<<<< HEAD
    //mgr->ConnectOutput (clus, 0, mgr->GetCommonOutputContainer());
    // Se lo commento non riesco piu' a leggere neanche i containers dei vertici
    mgr->ConnectOutput (clus,  1, coutput1_clus );
-=======
-  //mgr->ConnectOutput (clus, 0, mgr->GetCommonOutputContainer());
-  // Se lo commento non riesco piu' a leggere neanche i containers dei vertici
-  mgr->ConnectOutput (clus,  1, coutput1_clus );
->>>>>>> 1dee15b3f1681e0b28ab218380be81768f87986d
    
   return clus;
 }

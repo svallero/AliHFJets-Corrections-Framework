@@ -53,16 +53,8 @@ class AliAnalysisTaskSEHFJets : public AliAnalysisTaskSE {
   void SetRecoJetsBranch(const char* branch) {fRecoJetsBranch = branch;}
   void SetMcJetsBranch(const char* branch) {fMcJetsBranch = branch;}
 
-<<<<<<< HEAD
   void SetTagger(AliHFJetsTaggingVertex *tagger){fTagger=(AliHFJetsTaggingVertex*)tagger->Clone("fTagger");}
   void SetCuts(AliRDHFJetsCuts *cuts){delete fCutsHFjets; fCutsHFjets=(AliRDHFJetsCuts*)cuts->Clone("fCutsHFjets");}
-
-=======
-  void SetReadMC(Int_t readMC){fReadMC=readMC;}
-  void SetCuts(AliRDHFJetsCuts *cuts){delete fCutsHFjets; fCutsHFjets=new AliRDHFJetsCuts(*cuts);}
-  void SetTagger(AliHFJetsTaggingVertex *tagger){fTagger=new AliHFJetsTaggingVertex(*tagger);}
-  //void SetTagger(AliHFJetsTaggingVertex *tagger){fTagger=tagger;}
->>>>>>> 1dee15b3f1681e0b28ab218380be81768f87986d
 
  private:
   AliAnalysisTaskSEHFJets(const AliAnalysisTaskSEHFJets&); // copy constructo not implemented yet
