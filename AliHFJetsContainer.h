@@ -93,6 +93,7 @@ class AliHFJetsContainer : public TNamed
   AliCFContainer* fContainer;    // correction framework for B-jets 
   Int_t fNbins[fgkCFVars];           // number of bins for each variable
   Double_t *fBinning[fgkCFVars];     // set of bins for each variable
+  //Double_t *fBinning[100];     // set of bins for each variable
   const char *fAxisTitle[fgkCFVars]; // axis title for each variable
   void CreateContainer(TString name, TString title, Int_t nvars, Int_t *nbins, Double_t *binning[], const char *axistitle[]); // create containers belonging to this class
   void CreateCustomContainer(const Int_t nvars, const char* varnames[], Int_t *nbins, Double_t *binning[], const char*  axistitle[]);

@@ -100,7 +100,10 @@ AliAnalysisTaskSEHFJets::AliAnalysisTaskSEHFJets(const char *name)
   fArrayMC(0)
 { 
   // standard constructor
+<<<<<<< HEAD
   AliInfo("+++ Executing Constructor +++");
+=======
+>>>>>>> 1dee15b3f1681e0b28ab218380be81768f87986d
   DefineOutput(1, AliHFJetsContainerVertex::Class());
   DefineOutput(2, AliHFJetsContainerVertex::Class());
   DefineOutput(3, AliHFJetsContainerVertex::Class());
@@ -113,7 +116,16 @@ AliAnalysisTaskSEHFJets::AliAnalysisTaskSEHFJets(const char *name)
 AliAnalysisTaskSEHFJets::~AliAnalysisTaskSEHFJets(){
 
   // destructor
+<<<<<<< HEAD
   AliInfo("+++ Executing Destructor +++");
+=======
+  AliInfo("Running Destructor");
+  delete fCutsHFjets;
+  delete fTagger;
+  fTagger = 0;
+  fbJetArray->Delete();
+  delete fbJetArray;
+>>>>>>> 1dee15b3f1681e0b28ab218380be81768f87986d
   delete fhJets;
   delete fhQaVtx;
   delete fhBJets;
@@ -127,17 +139,28 @@ AliAnalysisTaskSEHFJets::~AliAnalysisTaskSEHFJets(){
 void AliAnalysisTaskSEHFJets::Init()
 {
   // Initialization
+<<<<<<< HEAD
   AliInfo("+++ Executing Init +++");
   AliLog::SetGlobalDebugLevel(AliLog::kInfo);
 
+=======
+  AliLog::SetGlobalDebugLevel(AliLog::kError);
+  AliInfo("Running Init");
+  //if (!fTagger)fTagger = new AliHFJetsTaggingVertex();
+>>>>>>> 1dee15b3f1681e0b28ab218380be81768f87986d
 }
 
 
 //________________________________________________________________________
 void AliAnalysisTaskSEHFJets::UserCreateOutputObjects(){
+<<<<<<< HEAD
 
   AliInfo("+++ Executing UserCreateOutputObjects +++");
 
+=======
+  
+  AliInfo("Running UserCreateOutputObjects");
+>>>>>>> 1dee15b3f1681e0b28ab218380be81768f87986d
   // Create the containers for jet and vertex properties
   // reconstructed jets
   fhJets= new AliHFJetsContainerVertex("kJets",AliHFJetsContainerVertex::kJets);
@@ -172,8 +195,12 @@ void AliAnalysisTaskSEHFJets::UserCreateOutputObjects(){
 //________________________________________________________________________
 void AliAnalysisTaskSEHFJets::UserExec(Option_t */*option*/){
 
+<<<<<<< HEAD
   AliInfo("+++ Executing UserExec +++");
 
+=======
+  AliInfo("Running UserExec");
+>>>>>>> 1dee15b3f1681e0b28ab218380be81768f87986d
   // Execute analysis for current event
 
   if(!fbJetArray)fbJetArray=new TClonesArray("AliAODVertex",0);
@@ -408,16 +435,16 @@ void AliAnalysisTaskSEHFJets::UserExec(Option_t */*option*/){
 
   //delete v1;
   //delete fArrayMC; 
-  delete fCutsHFjets;
-  delete fTagger;
-  fbJetArray->Delete();
-  delete fbJetArray;
-  delete fhJets;
-  delete fhQaVtx;
-  delete fhBJets;
-  delete fhJetVtx;
-  delete fArrayMC;
-delete aod;
+  //delete fCutsHFjets;
+  //delete fTagger;
+  //fbJetArray->Delete();
+  //delete fbJetArray;
+  //delete fhJets;
+  //delete fhQaVtx;
+  //delete fhBJets;
+  //delete fhJetVtx;
+  //delete fArrayMC;
+  //delete aod;
 
 }
 
