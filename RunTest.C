@@ -76,7 +76,7 @@ void RunTest()
     TH2D *heff=cont->GetEfficiency2D();
     new TCanvas();
     heff->DrawCopy();
-  } else if (1){  
+  } else if (0){  
     //AliHFJetContainer *cont= new AliHFJetContainer("Dummy");
     AliHFJetsContainerVertex *cont1= new AliHFJetsContainerVertex("cont1",AliHFJetsContainerVertex::kJets);
     AliHFJetsContainerVertex *cont2= new AliHFJetsContainerVertex("cont2",AliHFJetsContainerVertex::kBJets);
