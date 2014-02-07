@@ -4,11 +4,11 @@ class AliAnalysisAlien;
 void RunSara()
 {
 
-  TString mode = "local";
+  TString mode = "grid";
 
   // Load configuration
   //gROOT->LoadMacro("ConfigurationOrig.C");
-  gROOT->LoadMacro("Configuration.C");
+  gROOT->LoadMacro("ConfigurationVAF.C");
 
   // Set paths
   gSystem->SetIncludePath(includepath.Data()); 
