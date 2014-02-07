@@ -7,7 +7,8 @@ void RunSara()
   // This macro is to run "local" or "grid"
   // To run with PROOF see RunVaf.C
 
-  TString mode = "grid";
+  //TString mode = "grid";
+  TString mode = "local";
 
   // Load configuration
   //gROOT->LoadMacro("ConfigurationOrig.C");
@@ -100,7 +101,7 @@ AliAnalysisGrid* CreateAlienHandler(){
   plugin->SetUser(user.Data());
 
   // General configuration
-  plugin->SetNtestFiles(10);
+  plugin->SetNtestFiles(1);
   plugin->SetAnalysisMacro(Form("%s.C",name.Data()));
   plugin->SetJDLName(Form("%s.jdl",name.Data()));
   plugin->SetExecutable(Form("%s.sh",name.Data()));
