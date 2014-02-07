@@ -217,6 +217,7 @@ AliRDHFJetsCuts::~AliRDHFJetsCuts() {
   //
 
   if(fHistCentrDistr)delete fHistCentrDistr;
+  if (fTrackCuts) delete fTrackCuts;
 }
 //---------------------------------------------------------------------------
 Int_t AliRDHFJetsCuts::IsEventSelectedInCentrality(AliVEvent *event) {

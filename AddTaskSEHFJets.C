@@ -1,4 +1,4 @@
-AliAnalysisTaskSEHFJets* AddTaskSEHFJets(TString fileout="standard",Bool_t readmc=kTRUE,TString cutfile="HFJetVertexCuts.root",TString containerprefix="c", Float_t minC=0., Float_t maxC=7.5)
+AliAnalysisTaskSEHFJets* AddTaskSEHFJets(TString fileout="standard",Bool_t corrections_mode=kTRUE,TString cutfile="HFJetVertexCuts.root",TString containerprefix="c", Float_t minC=0., Float_t maxC=7.5)
 {
 
   // Mailto: andrea.rossi@ts.infn.it, svallero@to.infn.it
@@ -29,22 +29,23 @@ AliAnalysisTaskSEHFJets* AddTaskSEHFJets(TString fileout="standard",Bool_t readm
   // Configure analysis task
   AliAnalysisTaskSEHFJets *hfTask;
   hfTask = new AliAnalysisTaskSEHFJets("AliAnalysisTaskSEHFJets");
-
+  
   // Set data or corrections mode
-  hfTask->SetCorrectionsMode(kTRUE); // kFALSE for real data
+  hfTask->SetCorrectionsMode(corrections_mode); // kFALSE for real data
 
   //Set the jets branch
   hfTask->SetRecoJetsBranch("JetClusterAOD_ANTIKT04_B0_Filter00272_Cut00150_Skip00");
   hfTask->SetMcJetsBranch("JetClusterAODMC2_ANTIKT04_B0_Filter00272_Cut00150_Skip00");
+
   // Define the tagger
   AliHFJetsTaggingVertex *tagger=new AliHFJetsTaggingVertex();
 
   // Set analysis cuts
   if(!gSystem->AccessPathName(cutfile.Data(),kFileExists)){
-    // read cuts from file
-    ::Info(Form("Reading cuts from file: %s", cutfile.Data()));
-    TFile *f=TFile::Open(cutfile.Data());
-    AliRDHFJetsCuts.cxx *cuts= (AliRDHFCutsD0toKpi*)f->Get("HFJetsCutsVertex");
+     read cuts from file
+     ::Info(Form("Reading cuts from file: %s", cutfile.Data()));
+     TFile *f=TFile::Open(cutfile.Data());
+     AliRDHFJetsCuts.cxx *cuts= (AliRDHFCutsD0toKpi*)f->Get("HFJetsCutsVertex");
     // Set centrality 
     cuts->SetMinCentrality(minC);
     cuts->SetMaxCentrality(maxC);
@@ -58,7 +59,7 @@ AliAnalysisTaskSEHFJets* AddTaskSEHFJets(TString fileout="standard",Bool_t readm
 
 
   // Set read MC
-  hfTask->SetReadMC(readmc);
+  //hfTask->SetReadMC(readmc); // deprecated
   
   // Add task to manager
   hfTask->SetTagger(tagger);
@@ -82,7 +83,6 @@ AliAnalysisTaskSEHFJets* AddTaskSEHFJets(TString fileout="standard",Bool_t readm
   arr = names.Tokenize(";");
   TIter next(arr);
   Int_t i=0;
-  //const Int_t entr = arr->GetEntries();
   AliAnalysisDataContainer *containerJets[4];
   while ((objstr=(TObjString*)next())){
     containername=objstr->GetString();
@@ -92,7 +92,9 @@ AliAnalysisTaskSEHFJets* AddTaskSEHFJets(TString fileout="standard",Bool_t readm
     mgr->ConnectOutput(hfTask,i+1,containerJets[i]);
     i++;
   }
+  
   delete tagger;
+
   return hfTask;
 }
 
@@ -110,17 +112,18 @@ void DefineCutsTask(AliAnalysisTaskSEHFJets *task, Float_t minC, Float_t maxC){
     cuts->SetMinCentrality(minC);
     cuts->SetMaxCentrality(maxC);
     task->SetCuts(cuts);
-
+    delete cuts; 
 }
 
 //------------------------------------------------------
 void DefineCutsTagger(AliHFJetsTaggingVertex *tg){
    
-    // define cuts for tagger
-    // AliRDHFJetsCuts: event selections, basic jet cuts (pT jet, accpetance, emcal, pT leading-track)
-    // AliRDHFJetsCutsVertex: cuts to reconstruct vertices
+    // define cuts for tagger:
+    // 1) AliRDHFJetsCuts: event selections, basic jet cuts (pT jet, accpetance, emcal, pT leading-track)
+    // 2) AliRDHFJetsCutsVertex: cuts to reconstruct vertices
     // (nprong, pT jet, eta, R, pTmin tracks, electron ID, displacement and other cut variables)
     AliRDHFJetsCutsVertex *cuts2=new AliRDHFJetsCutsVertex("jetCuts");
+
     // jets
     cuts2->SetJetRadius(0.4);
     cuts2->SetMaxEtaJet(0.5);//0.9-R
@@ -152,4 +155,6 @@ void DefineCutsTagger(AliHFJetsTaggingVertex *tg){
     cuts2->SetCospCut(-1);//default -1
     tg->SetCuts(cuts2);
 
+    delete esdTrackCuts;
+    delete cuts2;
 }

@@ -44,25 +44,19 @@
 #include "AliAODPid.h"
 #include "AliTPCPIDResponse.h"
 #include "AliAODMCHeader.h"
-#include "AliAnalysisVertexingHF.h"
 #include "AliAnalysisTaskSEHFJets.h"
 #include "AliRDHFCutsD0toKpi.h"
 #include "AliAODInputHandler.h"
 #include "AliAnalysisManager.h"
 #include "AliNormalizationCounter.h"
-#include "AliRDHFJetsCuts.h"
-#include "AliHFJetsTagging.h"
-#include "AliHFJetsTaggingVertex.h"
+#include "AliLog.h"
 #include "AliAnalysisTaskJetCluster.h"
 #include "AliHFJetsContainerVertex.h"
-#include "AliLog.h"
-
 class TCanvas;
 class TTree;
 class TChain;
 class AliAnalysisTaskSE;
 class AliCFContainer;
-class AliHFJetsTaggingVertex;
 
 ClassImp(AliAnalysisTaskSEHFJets)
 
@@ -72,14 +66,15 @@ AliAnalysisTaskSEHFJets::AliAnalysisTaskSEHFJets()
   fhQaVtx(0),
   fhBJets(0),
   fhJetVtx(0),
-  fReadMC(0),
-  fCutsHFjets(0),
-  fTagger(0),
-  fbJetArray(0),
-  fRecoJetsBranch(""),
-  fMcJetsBranch(""),
   fCorrMode(kTRUE),
+  fRecoJetsBranch(),
+  fMcJetsBranch(),
+  fNentries(0),
+  fTagger(0),
+  fCutsHFjets(0),
+  fbJetArray(0),
   fArrayMC(0)
+   
 {
 
   // default constructor
@@ -95,17 +90,17 @@ AliAnalysisTaskSEHFJets::AliAnalysisTaskSEHFJets(const char *name)
   fhQaVtx(0),
   fhBJets(0),
   fhJetVtx(0),
-  fReadMC(0),
-  fCutsHFjets(0),
-  fTagger(0),
-  fbJetArray(0),
-  fRecoJetsBranch(""),
-  fMcJetsBranch(""),
   fCorrMode(kTRUE),
+  fRecoJetsBranch(),
+  fMcJetsBranch(),
+  fNentries(0),
+  fTagger(0),
+  fCutsHFjets(0),
+  fbJetArray(0),
   fArrayMC(0)
 { 
   // standard constructor
-
+  AliInfo("+++ Executing Constructor +++");
   DefineOutput(1, AliHFJetsContainerVertex::Class());
   DefineOutput(2, AliHFJetsContainerVertex::Class());
   DefineOutput(3, AliHFJetsContainerVertex::Class());
@@ -118,31 +113,30 @@ AliAnalysisTaskSEHFJets::AliAnalysisTaskSEHFJets(const char *name)
 AliAnalysisTaskSEHFJets::~AliAnalysisTaskSEHFJets(){
 
   // destructor
-
-  delete fCutsHFjets;
-  delete fTagger;
-  fTagger = 0;
-  fbJetArray->Delete();
-  delete fbJetArray;
+  AliInfo("+++ Executing Destructor +++");
   delete fhJets;
   delete fhQaVtx;
   delete fhBJets;
   delete fhJetVtx;
-  delete fArrayMC;
 
+  if (fTagger) delete fTagger;
+  if (fCutsHFjets) delete fCutsHFjets;
 }
 
 //________________________________________________________________________
 void AliAnalysisTaskSEHFJets::Init()
 {
   // Initialization
-  AliLog::SetGlobalDebugLevel(AliLog::kError);
-  if (!fTagger)fTagger = new AliHFJetsTaggingVertex();
+  AliInfo("+++ Executing Init +++");
+  AliLog::SetGlobalDebugLevel(AliLog::kInfo);
+
 }
 
 
 //________________________________________________________________________
 void AliAnalysisTaskSEHFJets::UserCreateOutputObjects(){
+
+  AliInfo("+++ Executing UserCreateOutputObjects +++");
 
   // Create the containers for jet and vertex properties
   // reconstructed jets
@@ -178,9 +172,9 @@ void AliAnalysisTaskSEHFJets::UserCreateOutputObjects(){
 //________________________________________________________________________
 void AliAnalysisTaskSEHFJets::UserExec(Option_t */*option*/){
 
+  AliInfo("+++ Executing UserExec +++");
+
   // Execute analysis for current event
- 
-  if (fCorrMode && !fReadMC) fReadMC = kTRUE;
 
   if(!fbJetArray)fbJetArray=new TClonesArray("AliAODVertex",0);
   Double_t arrDispersion[1000];
@@ -200,13 +194,13 @@ void AliAnalysisTaskSEHFJets::UserExec(Option_t */*option*/){
   // (JetCluster task should be on the train before this one)
   // Get RECO-jets
   TClonesArray *arrayJets = (TClonesArray*)(((AliAnalysisTaskJetCluster*)AliAnalysisManager::GetAnalysisManager()->GetTask(fRecoJetsBranch))->fTCAJetsOut);
-  if(!arrayJets) 
+  if(!arrayJets)
     AliError(RED"Jets RECO branch not found!"B);
   // GetMC-jets
   TClonesArray *arrayMCJets;
   if (fCorrMode){
     arrayMCJets = (TClonesArray*)(((AliAnalysisTaskJetCluster*)AliAnalysisManager::GetAnalysisManager()->GetTask(fMcJetsBranch))->fTCAJetsOut);
-    if(!arrayMCJets) 
+    if(!arrayMCJets)
       AliError(RED"Jets MC branch not found!"B);
   }
 
@@ -280,14 +274,14 @@ void AliAnalysisTaskSEHFJets::UserExec(Option_t */*option*/){
   AliAODVertex *vtx1 = (AliAODVertex*)aod->GetPrimaryVertex();
   TString primTitle = vtx1->GetTitle();
   // require "VertexerTracks" and at least 1 contributor
-  if(primTitle.Contains("VertexerTracks") && vtx1->GetNContributors()>0) { 
+  if(primTitle.Contains("VertexerTracks") && vtx1->GetNContributors()>0) {
     fNentries->Fill(2); // EvGoodVtx  
   }else {
     AliDebug(AliLog::kDebug,"Event did not pass primary vertex selection!");
     PostData(5,fNentries);
     return;
   }
-   
+
   // Convert to AliESDVertex 
   Double_t primvtx[3],primcov[6];
   vtx1->GetXYZ(primvtx);
@@ -295,21 +289,21 @@ void AliAnalysisTaskSEHFJets::UserExec(Option_t */*option*/){
   Int_t nPrimContr=vtx1->GetNContributors();
   Double_t chi2=vtx1->GetChi2();
   AliESDVertex* v1 = new AliESDVertex(primvtx,primcov,chi2,nPrimContr);
-  Double_t magzkG = (Double_t)aod->GetMagneticField(); 
+  Double_t magzkG = (Double_t)aod->GetMagneticField();
 
   // MC information (vertex and particles)
   TClonesArray *arrayMC=0x0;
   AliAODMCHeader *aodmcHeader=0x0;
   Double_t vtxTrue[3];
 
-  if(fReadMC){
+  if(fCorrMode){
     // load MC particles
-    arrayMC = 
+    arrayMC =
       (TClonesArray*)aod->GetList()->FindObject(AliAODMCParticle::StdBranchName());
     if(!arrayMC) AliError(RED"MC particles branch not found!"B);
-    
+
     // load MC header
-    aodmcHeader = 
+    aodmcHeader =
       (AliAODMCHeader*)aod->GetList()->FindObject(AliAODMCHeader::StdBranchName());
     if(!aodmcHeader) AliError(RED"MC header branch not found!"B);
 
@@ -337,7 +331,7 @@ void AliAnalysisTaskSEHFJets::UserExec(Option_t */*option*/){
     Double_t contribution=0.;
     // contribution = pT weight of mother parton (only method 1)
 
-    if(fReadMC){ // THIS MAKES SENSE ONLY FOR MC
+    if(fCorrMode){ // THIS MAKES SENSE ONLY FOR MC
       AliAODMCParticle *parton[3];
       parton[0]=fTagger->IsMCJet(arrayMC,jet,contribution); // method 1
       parton[1]=(AliAODMCParticle*)fTagger->IsMCJetParton(arrayMC,jet); // method 2
@@ -388,7 +382,7 @@ void AliAnalysisTaskSEHFJets::UserExec(Option_t */*option*/){
     fhJets->FillStepJets(step,mult,jet,partonnat,contribution,ptpart);
     // Run b-tagger
     // THIS MAKES SENSE ALSO FOR DATA
-    nvtx=fTagger->FindVertices(jet,aod,v1,magzkG,fbJetArray,arrDispersion);    
+    nvtx=fTagger->FindVertices(jet,aod,v1,magzkG,fbJetArray,arrDispersion);
     //printf(" %d vertices, %d array size\n",nvtx,fbJetArray->GetEntries());
     if(nvtx>0){
 
@@ -431,9 +425,9 @@ delete aod;
 void AliAnalysisTaskSEHFJets::Terminate(const Option_t*){
 
   //TERMINATE METHOD: NOTHING TO DO
+  AliInfo("+++ Executing Terminate +++");
 
 }
-
 
 void AliAnalysisTaskSEHFJets::GetFlavour3Methods(AliAODJet *jet, Double_t (&partonnat)[3], Double_t (&ptpart)[3], Double_t &contribution){
 
@@ -448,14 +442,12 @@ void AliAnalysisTaskSEHFJets::GetFlavour3Methods(AliAODJet *jet, Double_t (&part
      * 2 = light                             *
      * 3 = with c                            *
      * 4 = with b                            */
-     
+
      // Initialize output values
      for (Int_t i=0; i<3; i++){
         partonnat[i]=0;
         ptpart[i] = -1.;
       }
-
-    
       AliAODMCParticle *parton[3];
       parton[0]=fTagger->IsMCJet(fArrayMC,jet,contribution); // method 1
       parton[1]=(AliAODMCParticle*)fTagger->IsMCJetParton(fArrayMC,jet); // method 2
@@ -489,8 +481,8 @@ void AliAnalysisTaskSEHFJets::GetFlavour3Methods(AliAODJet *jet, Double_t (&part
           if((pdg>=500 && pdg<=600) || (pdg>=5000 && pdg<=6000))partonnat[2]=4;
           else partonnat[2]=2;
         }
-
         ptpart[2]=parton[2]->Pt();
       }
 
 }
+

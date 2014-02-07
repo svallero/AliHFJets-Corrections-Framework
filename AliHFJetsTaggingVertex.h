@@ -46,7 +46,7 @@ class AliHFJetsTaggingVertex : public AliHFJetsTagging {
   Int_t FindVertices(const AliAODJet *jet,AliAODEvent* aod, AliESDVertex* v1, Double_t magzkG ,TClonesArray *arrVertices, Double_t *arrDispersion);
   AliAODVertex* ReconstructSecondaryVertex(TObjArray *trkArray, AliESDVertex* v1, Double_t magzkG ,Double_t &dispersion) const;
 
-  void SetCuts(AliRDHFJetsCutsVertex *cuts){delete fCutsHFjets;fCutsHFjets=new AliRDHFJetsCutsVertex(*cuts);}
+  void SetCuts(AliRDHFJetsCutsVertex *cuts){delete fCutsHFjets;fCutsHFjets=(AliRDHFJetsCutsVertex*)cuts->Clone("fCutsHFjets");}
   
   // Methods imported form task SEHFJets (A. Rossi)
   Double_t GetVertexInvariantMass(AliAODVertex *vtx,Double_t massParticle=0.138);

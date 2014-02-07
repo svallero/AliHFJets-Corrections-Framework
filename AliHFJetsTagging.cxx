@@ -44,7 +44,7 @@ AliHFJetsTagging::AliHFJetsTagging(const char* name):
 }
 
 AliHFJetsTagging::~AliHFJetsTagging(){
-  delete fSelectedTracks;
+  //delete fSelectedTracks;
 }
 
 AliHFJetsTagging &AliHFJetsTagging::operator=(const AliHFJetsTagging &c)

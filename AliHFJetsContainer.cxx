@@ -72,10 +72,6 @@ AliHFJetsContainer::AliHFJetsContainer(const char* name, Bool_t dummy):
     CreateContainer("fContainerStandard", "Standard container for corrections", fgkCFVars, fNbins, fBinning, fAxisTitle);  
   }
 
-    // Delete arrays 
-  //  for (Int_t k=0; k<fgkCFVars; k++){
-  //    delete fBinning[k];
-  //  }
 }
 
 AliHFJetsContainer::AliHFJetsContainer(const char* name, const Int_t nvars, const char* varnames[], Int_t *nbins, Double_t *binning[], const char*  axistitle[]): 
@@ -113,16 +109,10 @@ AliHFJetsContainer::~AliHFJetsContainer()
     fContainer = 0;
     }
   
-  for (Int_t k=0; k<fgkCFVars; k++){
-    if (fBinning[k]){
-      delete fBinning[k];
-        fBinning[k] = 0;
+    // Delete arrays 
+    for (Int_t k=0; k<fgkCFVars; k++){
+      delete [] fBinning[k];
     }
-    //if (fAxisTitle[k]){
-      //delete fAxisTitle[k];
-      //fAxisTitle[k] = 0;
-    //}
-  }
 }
 
 

@@ -188,12 +188,12 @@ AliAnalysisTaskJetCluster *AddTaskJetCluster(char* bRec,char* bGen ,UInt_t filte
   mgr->ConnectInput(clus,0,cinput);
   
 
-  //AliAnalysisDataContainer *coutput1_clus = mgr->CreateContainer(Form("cluster_%s_%s_%s%s",bRec,bGen,jf,cAdd.Data()), TList::Class(),AliAnalysisManager::kOutputContainer,Form("%s:PWGJE_cluster_%s_%s_%s%s",AliAnalysisManager::GetCommonFileName(),bRec,bGen,jf,cAdd.Data()));
+  AliAnalysisDataContainer *coutput1_clus = mgr->CreateContainer(Form("cluster_%s_%s_%s%s",bRec,bGen,jf,cAdd.Data()), TList::Class(),AliAnalysisManager::kOutputContainer,Form("%s:PWGJE_cluster_%s_%s_%s%s",AliAnalysisManager::GetCommonFileName(),bRec,bGen,jf,cAdd.Data()));
 
    // mgr->ConnectInput  (clus, 0, mgr->GetCommonInputContainer());
    //mgr->ConnectOutput (clus, 0, mgr->GetCommonOutputContainer());
    // Se lo commento non riesco piu' a leggere neanche i containers dei vertici
-   //mgr->ConnectOutput (clus,  1, coutput1_clus );
+   mgr->ConnectOutput (clus,  1, coutput1_clus );
    
    return clus;
 }

@@ -21,11 +21,11 @@ class AliAnalysisVertexingHF;
 class AliNormalizationCounter;
 class AliAODMCParticle;
 
+#include "AliAnalysisTaskSE.h" 
+#include "AliHFJetsContainerVertex.h"
 #include "AliHFJetsTagging.h"
 #include "AliHFJetsTaggingVertex.h"
-#include "AliAnalysisTaskSE.h"
 #include "AliRDHFJetsCuts.h"
-#include "AliHFJetsContainerVertex.h"
 #include <TArrayI.h>
 #include <TArrayD.h>
 
@@ -53,32 +53,33 @@ class AliAnalysisTaskSEHFJets : public AliAnalysisTaskSE {
   void SetRecoJetsBranch(const char* branch) {fRecoJetsBranch = branch;}
   void SetMcJetsBranch(const char* branch) {fMcJetsBranch = branch;}
 
-  void SetReadMC(Int_t readMC){fReadMC=readMC;}
-  void SetCuts(AliRDHFJetsCuts *cuts){delete fCutsHFjets; fCutsHFjets=new AliRDHFJetsCuts(*cuts);}
-  //void SetTagger(AliHFJetsTaggingVertex *tagger){fTagger=new AliHFJetsTaggingVertex(*tagger);}
-  void SetTagger(AliHFJetsTaggingVertex *tagger){fTagger=tagger;}
+  void SetTagger(AliHFJetsTaggingVertex *tagger){fTagger=(AliHFJetsTaggingVertex*)tagger->Clone("fTagger");}
+  void SetCuts(AliRDHFJetsCuts *cuts){delete fCutsHFjets; fCutsHFjets=(AliRDHFJetsCuts*)cuts->Clone("fCutsHFjets");}
+
 
  private:
-  AliHFJetsContainerVertex *fhJets;    // reco jet properties             
-  AliHFJetsContainerVertex *fhQaVtx;   // vertices properties             
-  AliHFJetsContainerVertex *fhBJets;   // B-jet properties             
-  AliHFJetsContainerVertex *fhJetVtx;  // properties of vertices within the jet            
   AliAnalysisTaskSEHFJets(const AliAnalysisTaskSEHFJets&); // copy constructo not implemented yet
   AliAnalysisTaskSEHFJets& operator=(const AliAnalysisTaskSEHFJets&); // assignment operator not implemented yet
 
+  // temporary
   void GetFlavour3Methods(AliAODJet *jet, Double_t (&partonnat)[3], Double_t (&ptpart)[3], Double_t &contribution);
 
-  Int_t fReadMC;                       // 0=no read mc, 1=is MC but analysis is data-like, 2=MC based analysis
-  TH1F *fNentries;                     //! histo for event counting and checks
-  // AliRDHFCutsJets *fCutsHFjets;     // jet cut object
-  AliRDHFJetsCuts *fCutsHFjets;        // specific algo jet cut object (incude the above?)
-  AliHFJetsTaggingVertex *fTagger;     // Jet Tagging object
-  TClonesArray *fbJetArray;            //! b-tagged jets
-  
+  AliHFJetsContainerVertex *fhJets;    // reco jet properties
+  AliHFJetsContainerVertex *fhQaVtx;   // vertices properties
+  AliHFJetsContainerVertex *fhBJets;   // B-jet properties
+  AliHFJetsContainerVertex *fhJetVtx;  // properties of vertices within the jet 
+
+  Bool_t fCorrMode;                    // enable correction or data modes
   const char* fRecoJetsBranch;            // name of the AOD RECO-jets branch  
   const char* fMcJetsBranch;             // name of the AOD MC-jets branch  
-  Bool_t fCorrMode;                    // enable correction or data modes
+
+  TH1F *fNentries;                     //! histo for event counting and checks
+  AliHFJetsTaggingVertex *fTagger;     // Jet Tagging object
+  AliRDHFJetsCuts *fCutsHFjets;        // specific algo jet cut object 
+
+  TClonesArray *fbJetArray;            //! b-tagged jets
   TClonesArray *fArrayMC;              // array of MC particles for given event
+
   ClassDef(AliAnalysisTaskSEHFJets,1); // analysis task for MC study
 };
 

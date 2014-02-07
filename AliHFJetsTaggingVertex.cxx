@@ -58,9 +58,14 @@ AliHFJetsTaggingVertex::~AliHFJetsTaggingVertex(){
     //fTrackArray->Clear();
     // SARA hack
     delete fTrackArray;
+    fTrackArray=0;
   }
-  if(fCutsHFjets) 
-  delete fCutsHFjets;
+
+  if(fCutsHFjets) {
+    //fCutsHFjets->Clear();
+    delete fCutsHFjets;
+    //fCutsHFjets=0;
+  }
 
 }
 
