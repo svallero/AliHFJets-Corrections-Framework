@@ -8,6 +8,7 @@ void RunSara()
   // To run with PROOF see RunVaf.C
 
   TString mode = "grid";
+  //TString mode = "local";
 
   // Load configuration
   //gROOT->LoadMacro("ConfigurationOrig.C");

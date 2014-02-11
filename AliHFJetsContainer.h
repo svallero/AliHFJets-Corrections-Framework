@@ -47,6 +47,9 @@ class AliHFJetsContainer : public TNamed
   virtual ~AliHFJetsContainer();
   // Assignment operator
   AliHFJetsContainer& operator=(const AliHFJetsContainer& corr);
+  // Merging functions needed for Proof
+  virtual void     Add(const AliHFJetsContainer* aContainerToAdd, Double_t c=1.);
+  virtual Long64_t Merge(TCollection* list);
   
   // Useful tools
   virtual void Copy(TObject& c) const;

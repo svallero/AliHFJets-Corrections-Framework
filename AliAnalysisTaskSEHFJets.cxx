@@ -28,6 +28,7 @@
 #include <TDatabasePDG.h>
 #include <TMath.h>
 #include <TROOT.h>
+#include <TList.h>
 #include "AliAODEvent.h"
 #include "AliAODRecoDecayHF2Prong.h"
 #include "AliAODRecoDecayHF.h"
@@ -73,7 +74,8 @@ AliAnalysisTaskSEHFJets::AliAnalysisTaskSEHFJets()
   fTagger(0),
   fCutsHFjets(0),
   fbJetArray(0),
-  fArrayMC(0)
+  fArrayMC(0),
+  fOutputList(0x0)
    
 {
 
@@ -97,16 +99,18 @@ AliAnalysisTaskSEHFJets::AliAnalysisTaskSEHFJets(const char *name)
   fTagger(0),
   fCutsHFjets(0),
   fbJetArray(0),
-  fArrayMC(0)
+  fArrayMC(0), 
+  fOutputList(0x0)
 { 
   // standard constructor
   AliInfo("+++ Executing Constructor +++");
 
-  DefineOutput(1, AliHFJetsContainerVertex::Class());
-  DefineOutput(2, AliHFJetsContainerVertex::Class());
-  DefineOutput(3, AliHFJetsContainerVertex::Class());
-  DefineOutput(4, AliHFJetsContainerVertex::Class());
-  DefineOutput(5, TH1F::Class());
+  //DefineOutput(1, TH1F::Class());
+  DefineOutput(1, TList::Class());
+  //DefineOutput(2, AliHFJetsContainerVertex::Class());
+  //DefineOutput(3, AliHFJetsContainerVertex::Class());
+  //DefineOutput(4, AliHFJetsContainerVertex::Class());
+  //DefineOutput(5, AliHFJetsContainerVertex::Class());
 
 }
 
@@ -116,13 +120,17 @@ AliAnalysisTaskSEHFJets::~AliAnalysisTaskSEHFJets(){
   // destructor
   AliInfo("+++ Executing Destructor +++");
 
-  delete fhJets;
-  delete fhQaVtx;
-  delete fhBJets;
-  delete fhJetVtx;
+  // Do not delete outputs in proof mode or merging will fail
+  //if (!AliAnalysisManager::GetAnalysisManager()->IsProofMode()){
+  //   if (fOutputList) delete fOutputList;
+  //   if (fhJets) delete fhJets;
+  //   if (fhQaVtx) delete fhQaVtx;
+  //   if (fhBJets) delete fhBJets;
+  //   if (fhJetVtx) delete fhJetVtx;
+  //}
 
-  if (fTagger) delete fTagger;
-  if (fCutsHFjets) delete fCutsHFjets;
+  //if (fTagger) delete fTagger;
+  //if (fCutsHFjets) delete fCutsHFjets;
 }
 
 //________________________________________________________________________
@@ -141,16 +149,16 @@ void AliAnalysisTaskSEHFJets::UserCreateOutputObjects(){
 
   AliInfo("+++ Executing UserCreateOutputObjects +++");
 
-  // Create the containers for jet and vertex properties
-  // reconstructed jets
-  fhJets= new AliHFJetsContainerVertex("kJets",AliHFJetsContainerVertex::kJets);
-  // vertices QA
-  fhQaVtx= new AliHFJetsContainerVertex("kQaVtx",AliHFJetsContainerVertex::kQaVtx);
-  // tagged jets
-  fhBJets= new AliHFJetsContainerVertex("kBJets",AliHFJetsContainerVertex::kBJets);
-  // vertices within the jet
-  fhJetVtx= new AliHFJetsContainerVertex("kJetsVtx",AliHFJetsContainerVertex::kJetVtx);
-
+  // Initialize output list of containers
+  if (fOutputList != NULL){
+     delete fOutputList;
+     fOutputList = NULL;
+     }
+  if (!fOutputList){
+     fOutputList = new TList();
+     fOutputList->SetOwner(kTRUE);
+     }  
+  
   // Control histogram
   fNentries=new TH1F("nentriesChFr", "Analyzed sample properties", 9,-0.5,8.5);
   fNentries->GetXaxis()->SetBinLabel(1,"nEventsAnal");
@@ -162,12 +170,29 @@ void AliAnalysisTaskSEHFJets::UserCreateOutputObjects(){
   fNentries->GetXaxis()->SetBinLabel(7,"nJetsCand");
   fNentries->GetXaxis()->SetBinLabel(8,"nJetsTagged");
   fNentries->GetXaxis()->SetBinLabel(9,"nUnexpError");
+  fOutputList->Add(fNentries);
 
-  PostData(1,fhJets);
-  PostData(2,fhQaVtx);
-  PostData(3,fhBJets);
-  PostData(4,fhJetVtx);
-  PostData(5,fNentries);
+  // Create the containers for jet and vertex properties
+  // reconstructed jets
+  fhJets= new AliHFJetsContainerVertex("kJets",AliHFJetsContainerVertex::kJets);
+  fOutputList->Add(fhJets);
+  // vertices QA
+  fhQaVtx= new AliHFJetsContainerVertex("kQaVtx",AliHFJetsContainerVertex::kQaVtx);
+  fOutputList->Add(fhQaVtx);
+  // tagged jets
+  fhBJets= new AliHFJetsContainerVertex("kBJets",AliHFJetsContainerVertex::kBJets);
+  fOutputList->Add(fhBJets);
+  // vertices within the jet
+  fhJetVtx= new AliHFJetsContainerVertex("kJetsVtx",AliHFJetsContainerVertex::kJetVtx);
+  fOutputList->Add(fhJetVtx);
+
+
+  //PostData(1,fNentries);
+  PostData(1,fOutputList);
+  //PostData(2,fhJets);
+  //PostData(3,fhQaVtx);
+  //PostData(4,fhBJets);
+  //PostData(5,fhJetVtx);
 }
 
 
@@ -176,6 +201,10 @@ void AliAnalysisTaskSEHFJets::UserCreateOutputObjects(){
 void AliAnalysisTaskSEHFJets::UserExec(Option_t */*option*/){
 
   AliInfo("+++ Executing UserExec +++");
+
+  //PostData(1,fNentries);
+  PostData(1,fOutputList);
+  //return;
 
   // Execute analysis for current event
 
@@ -210,8 +239,9 @@ void AliAnalysisTaskSEHFJets::UserExec(Option_t */*option*/){
   fNentries->Fill(0); // EventsAnal      
   if(!fCutsHFjets->IsEventSelected(aod)){
     AliDebug(AliLog::kDebug,"Event did not pass event selection from AliRDHFJetsCuts!");
-    PostData(5,fNentries);
-    //return;
+    //PostData(1,fNentries);
+    PostData(1,fOutputList);
+    return;
   }else fNentries->Fill(1); // EvSel    
 
 
@@ -261,15 +291,16 @@ void AliAnalysisTaskSEHFJets::UserExec(Option_t */*option*/){
 
   } // end if (fCorrMode)
 
-  PostData(1,fhJets);
-  PostData(2,fhQaVtx);
-  PostData(3,fhBJets);
-  PostData(4,fhJetVtx);
-  PostData(5,fNentries);
+  //PostData(1,fNentries);
+  PostData(1,fOutputList);
+  //PostData(2,fhJets);
+  //PostData(3,fhQaVtx);
+  //PostData(4,fhBJets);
+  //PostData(5,fhJetVtx);
   //delete fArrayMC;
   //delete partonnatMC;
   //delete ptpartMC;
-  fbJetArray->Clear();
+  //fbJetArray->Clear();
   return;
 
   if (1){
@@ -281,7 +312,7 @@ void AliAnalysisTaskSEHFJets::UserExec(Option_t */*option*/){
     fNentries->Fill(2); // EvGoodVtx  
   }else {
     AliDebug(AliLog::kDebug,"Event did not pass primary vertex selection!");
-    PostData(5,fNentries);
+    PostData(1,fOutputList);
     return;
   }
 
@@ -403,11 +434,12 @@ void AliAnalysisTaskSEHFJets::UserExec(Option_t */*option*/){
     else AliDebug(AliLog::kDebug,"*** nvtx=0 !! ***");
   }
   } // end if(0)
-  PostData(1,fhJets);
-  PostData(2,fhQaVtx);
-  PostData(3,fhBJets);
-  PostData(4,fhJetVtx);
-  PostData(5,fNentries);
+  //PostData(1,fNentries);
+  PostData(1,fOutputList);
+  //PostData(2,fhJets);
+  //PostData(3,fhQaVtx);
+  //PostData(4,fhBJets);
+  //PostData(5,fhJetVtx);
 
   //delete v1;
   //delete fArrayMC; 

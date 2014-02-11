@@ -42,7 +42,7 @@ AliHFJetsContainerVertex::AliHFJetsContainerVertex():
   AliHFJetsContainer("",kTRUE),
   fType(kJets)
 {
-  //fTagger=new AliHFJetsTaggingVertex("tagger");
+  fTagger=new AliHFJetsTaggingVertex("tagger");
   // dummy
 }
 
@@ -82,9 +82,10 @@ AliHFJetsContainerVertex::~AliHFJetsContainerVertex()
 {
 
   // Destructor
-  //if (fTagger)
-    //delete fTagger;
-    //fTagger=0;
+  if (fTagger){
+    delete fTagger;
+    fTagger=0;
+    } 
 }
 
 //----------------------------------------------------------------

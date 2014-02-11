@@ -5,7 +5,7 @@ void RunVaf(){
   list->Add(new TNamed("ALIROOT_MODE", "AliRoot"));
 
   // Here extra AliRoot libs
-  TString alilibs("STEERBase:ESD:AOD:ANALYSIS:OADB:ANALYSISalice:CORRFW:PWGHFbase:PWGflowBase:PWGflowTasks:PWGHFvertexingHF:JETAN:SISConePlugin:FASTJETAN:PWGJE");
+  TString alilibs("STEERBase:ESD:AOD:ANALYSIS:OADB:ANALYSISalice:CORRFW:PWGLFforward2:PWGHFbase:PWGflowBase:PWGflowTasks:PWGHFvertexingHF:JETAN:SISConePlugin:FASTJETAN:PWGJE");
   // Here FASTJET stuff
   TString fastjetlibs("CGAL:fastjet:siscone:siscone_spherical");
 
@@ -14,7 +14,7 @@ void RunVaf(){
   list->Add(new TNamed("ALIROOT_EXTRA_LIBS", libs.Data()));
   
   // Here extra include path
-  TString includepath=("ITS:TPC:CONTAINERS:STEER/STEER:STEER/STEERBase:STEER/ESD:STEER/AOD:TRD:macros:ANALYSIS:OADB:PWGHF:PWGHF/base:PWGHF/vertexingHF:PWG/FLOW/Base:PWG/FLOW/Tasks:JETAN/fastjet:JETAN/fastjet/fastjet:JETAN:PWG/Tools"); 
+  TString includepath=("ITS:TPC:CONTAINERS:STEER/STEER:STEER/STEERBase:STEER/ESD:STEER/AOD:TRD:macros:ANALYSIS:OADB:PWGHF:PWGHF/base:PWGHF/vertexingHF:PWG/FLOW/Base:PWG/FLOW/Tasks:JETAN/fastjet:JETAN/fastjet/fastjet:JETAN:PWG/Tools:PWGLF/FORWARD/analysis2"); 
   list->Add(new TNamed("ALIROOT_EXTRA_INCLUDES", includepath.Data()));
 
   // Open PROOF connection
@@ -42,16 +42,17 @@ void RunVaf(){
   TIter next(arr);
   while ((objstr=(TObjString*)next())){
     TString str=(objstr->GetString()).Append(".cxx++g");
-    gROOT->LoadMacro(str.Data());
+    //gROOT->LoadMacro(str.Data());
+    gProof->Load(str.Data());
   }
   
  
   // Add tasks
   AddTaskJetFinder();
-  //AddTaskBJets(); 
+  AddTaskBJets(); 
 
   // Start analysis
-  Int_t nentries=10;
+  Int_t nentries=100;
   Int_t firstentry=0;
   if(!mgr->InitAnalysis()) return;
   mgr->PrintStatus();
@@ -74,7 +75,7 @@ void AddTaskJetFinder(){
   // MC charged with full eta window (5)
   taskCl = AddTaskJetCluster("AODMC2","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.4,0,kTRUE,"",0.15,fTrackEtaWindow);
   // MC charged with restricted eta window
-  taskCl = AddTaskJetCluster("AODMC2b","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.4,0,kTRUE,"",0.15,fTrackEtaWindow);
+  //taskCl = AddTaskJetCluster("AODMC2b","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.4,0,kTRUE,"",0.15,fTrackEtaWindow);
 
 }
 

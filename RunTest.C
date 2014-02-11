@@ -76,21 +76,32 @@ void RunTest()
     TH2D *heff=cont->GetEfficiency2D();
     new TCanvas();
     heff->DrawCopy();
-  } else if (0){  
+  }
+  if (1){  
     //AliHFJetContainer *cont= new AliHFJetContainer("Dummy");
     AliHFJetsContainerVertex *cont1= new AliHFJetsContainerVertex("cont1",AliHFJetsContainerVertex::kJets);
-    AliHFJetsContainerVertex *cont2= new AliHFJetsContainerVertex("cont2",AliHFJetsContainerVertex::kBJets);
-    Double_t point[13]={1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.};
-    TArrayD *apoint = new TArrayD(13,point);
+    AliHFJetsContainerVertex *cont2= new AliHFJetsContainerVertex("cont2",AliHFJetsContainerVertex::kJets);
+    Double_t point[14]={1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.};
+    TArrayD *apoint = new TArrayD(14,point);
+    cont1->FillStep(0,apoint);
     cont2->FillStep(0,apoint);
+
+
+    // Test merging
+    TList *l = new TList();
+    //l->Add(cont1); 
+    l->Add(cont2);
+   
+    cont1->Merge(l); 
+     
     //new TCanvas();
     //cont->ResetAxisStep(AliHFJetContainer::kCFMult, AliHFJetContainer::kCFStepAll);
-    TH1D *h2 = cont2->Project1D(AliHFJetsContainer::kCFStepAll, "kCFMult");
+    TH1D *h2 = cont1->Project1D(AliHFJetsContainer::kCFStepAll, "kCFMult");
     h2->DrawCopy();
 
-    TFile *f = new TFile("file.root","RECREATE");
-    cont2->Write();
-    f->Close();
+    //TFile *f = new TFile("file.root","RECREATE");
+    //cont2->Write();
+    //f->Close();
     // Vecchia versione
     //AliCFContainer *cf2 =(AliCFContainer*)cont->GetContainerPrimVtx();
     //Double_t point[13]={0.5,0.5,0.5,3,0,1,2,3,0.5,0.1,0.1,0.1,0.5};

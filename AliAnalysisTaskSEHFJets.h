@@ -12,6 +12,7 @@
 
 class TH1F;
 class TH2F;
+//class TList;
 class AliAODDEvent;
 class AliAODMCHeader;
 class AliAODRecoDecayHF2Prong;
@@ -79,6 +80,7 @@ class AliAnalysisTaskSEHFJets : public AliAnalysisTaskSE {
   TClonesArray *fbJetArray;            //! b-tagged jets
   TClonesArray *fArrayMC;              // array of MC particles for given event
 
+  TList *fOutputList;                  // list of output objects
   ClassDef(AliAnalysisTaskSEHFJets,1); // analysis task for MC study
 };
 
