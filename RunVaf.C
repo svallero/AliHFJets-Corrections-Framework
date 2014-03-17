@@ -49,7 +49,7 @@ void RunVaf(){
  
   // Add tasks
   AddTaskJetFinder();
-  AddTaskBJets(); 
+  //AddTaskBJets(); 
 
   // Start analysis
   Int_t nentries=100;
