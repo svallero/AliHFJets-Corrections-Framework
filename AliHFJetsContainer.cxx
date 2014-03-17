@@ -560,3 +560,13 @@ void AliHFJetsContainer::FillStep(CFSteps step,const TArrayD *point){
 
 	fContainer->Fill(point->GetArray(), step, 1.);
 }
+
+void AliHFJetsContainer::CloneStep(CFSteps step1, CFSteps step2){
+  
+  // This method copies the AliCFContainer grid of step1 to that of step2
+  
+  AliCFGridSparse *grid = (AliCFGridSparse*) fContainer->GetGrid(step1);
+  fContainer->SetGrid(step2, (AliCFGridSparse*)grid->Clone());
+
+
+}

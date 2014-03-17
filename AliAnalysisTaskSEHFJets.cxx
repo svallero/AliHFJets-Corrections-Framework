@@ -53,6 +53,8 @@
 #include "AliLog.h"
 #include "AliAnalysisTaskJetCluster.h"
 #include "AliHFJetsContainerVertex.h"
+#include "AliAnalysisHelperJetTasks.h"
+
 class TCanvas;
 class TTree;
 class TChain;
@@ -105,12 +107,7 @@ AliAnalysisTaskSEHFJets::AliAnalysisTaskSEHFJets(const char *name)
   // standard constructor
   AliInfo("+++ Executing Constructor +++");
 
-  //DefineOutput(1, TH1F::Class());
   DefineOutput(1, TList::Class());
-  //DefineOutput(2, AliHFJetsContainerVertex::Class());
-  //DefineOutput(3, AliHFJetsContainerVertex::Class());
-  //DefineOutput(4, AliHFJetsContainerVertex::Class());
-  //DefineOutput(5, AliHFJetsContainerVertex::Class());
 
 }
 
@@ -139,7 +136,7 @@ void AliAnalysisTaskSEHFJets::Init()
   // Initialization
   AliInfo("+++ Executing Init +++");
 
-  AliLog::SetGlobalDebugLevel(AliLog::kInfo);
+  AliLog::SetGlobalDebugLevel(AliLog::kError);
 
 }
 
@@ -202,11 +199,14 @@ void AliAnalysisTaskSEHFJets::UserExec(Option_t */*option*/){
 
   AliInfo("+++ Executing UserExec +++");
 
-  //PostData(1,fNentries);
-  PostData(1,fOutputList);
-  //return;
-
   // Execute analysis for current event
+  if (fCorrMode) AnalyseCorrectionsMode(); // must be MC, all steps are filled for container kBJets (only)
+  //else AnalyseDataMode(); // can also be MC, only step kCFStepRecoB is filled also for kBJets
+
+}
+
+//________________________________________________________________________
+void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
 
   if(!fbJetArray)fbJetArray=new TClonesArray("AliAODVertex",0);
   Double_t arrDispersion[1000];
@@ -228,95 +228,111 @@ void AliAnalysisTaskSEHFJets::UserExec(Option_t */*option*/){
   TClonesArray *arrayJets = (TClonesArray*)(((AliAnalysisTaskJetCluster*)AliAnalysisManager::GetAnalysisManager()->GetTask(fRecoJetsBranch))->fTCAJetsOut);
   if(!arrayJets)
     AliError(RED"Jets RECO branch not found!"B);
+
   // GetMC-jets
   TClonesArray *arrayMCJets;
-  if (fCorrMode){
-    arrayMCJets = (TClonesArray*)(((AliAnalysisTaskJetCluster*)AliAnalysisManager::GetAnalysisManager()->GetTask(fMcJetsBranch))->fTCAJetsOut);
-    if(!arrayMCJets)
-      AliError(RED"Jets MC branch not found!"B);
-  }
+  arrayMCJets = (TClonesArray*)(((AliAnalysisTaskJetCluster*)AliAnalysisManager::GetAnalysisManager()->GetTask(fMcJetsBranch))->fTCAJetsOut);
+  if(!arrayMCJets)
+    AliError(RED"Jets MC branch not found!"B);
 
+
+  // ALL EVENTS
   fNentries->Fill(0); // EventsAnal      
-  if(!fCutsHFjets->IsEventSelected(aod)){
+
+  // Set flags for event selection
+  Bool_t flagTriggered=kFALSE;
+  Bool_t flagVertex=kFALSE;
+  
+  AliAODVertex *vtx1;
+  // TRIGGER SELECTION
+  if(!fCutsHFjets->IsEventSelected(aod)){ // controllare che sia proprio un "trigger" cut TODO
     AliDebug(AliLog::kDebug,"Event did not pass event selection from AliRDHFJetsCuts!");
-    //PostData(1,fNentries);
-    PostData(1,fOutputList);
-    return;
-  }else fNentries->Fill(1); // EvSel    
+  } else {
+    flagTriggered=kTRUE;
+    fNentries->Fill(1); // EvSel   
+    // VERTEX SELECTION
+    // AOD primary vertex 
+    vtx1 = (AliAODVertex*)aod->GetPrimaryVertex();
+    TString primTitle = vtx1->GetTitle();
+    // require "VertexerTracks" and at least 1 contributor
+    if(!(primTitle.Contains("VertexerTracks") && vtx1->GetNContributors()>0)) {
+      AliDebug(AliLog::kDebug,"Event did not pass primary vertex selection!");
+    }else {
+      flagVertex=kTRUE;
+      fNentries->Fill(2); // EvGoodVtx
+      }
+    }
 
+  // We should fill the container kBJets at each step for the correction procedure!
 
-  Int_t mult = 1; // dummy value for the moment TODO
+  // Multiplicity
+  // Get array of MC particles
+  fArrayMC = (TClonesArray*)aod->GetList()->FindObject(AliAODMCParticle::StdBranchName());
+  if(!fArrayMC) AliError(RED"MC particles branch not found!"B);
+  // Count number of primary MC partcles
+  Int_t nMC = fArrayMC->GetEntries();
+  Int_t multMC = 0;
+  for (Int_t i = 0; i<nMC; i++){
+    AliAODMCParticle *part = (AliAODMCParticle*)fArrayMC->At(i);
+    if (part->IsPhysicalPrimary()) multMC++;
+    }
+  AliInfo(Form(cy"MC particles %d primaries %d"B,nMC, multMC ));
+
+  // Init steps
   AliHFJetsContainer::CFSteps step;
-  step = AliHFJetsContainer::kCFStepAll;
-  // We should fill the container at each step, so quantities are evaluated 
-  // before event selection
-  if (fCorrMode){
-
-    // Get array of MC particles
-    fArrayMC = (TClonesArray*)aod->GetList()->FindObject(AliAODMCParticle::StdBranchName());
-    if(!fArrayMC) AliError(RED"MC particles branch not found!"B);
-    // Count number of primary MC partcles
-    Int_t nMC = fArrayMC->GetEntries();
-    Int_t multMC = 0;
-    for (Int_t i = 0; i<nMC; i++){
-      AliAODMCParticle *part = (AliAODMCParticle*)fArrayMC->At(i);
-      if (part->IsPhysicalPrimary()) multMC++;
+  // Loop on MC jets
+  Int_t nMCJets=arrayMCJets->GetEntries();
+  // also write jets on TList, needed for matching 
+  TList *listMCJets=new TList();
+  //listMCJets->SetOwner(kTRUE);
+  TArrayI mcBJets(nMCJets); // = new TArrayI(nMCJets);
+  mcBJets.Reset(0);
+  // reco
+  TList * listJets=new TList();
+  //listJets->SetOwner(kTRUE);
+  //Int_t recoBJets[];
+  Int_t count=-1;
+  AliAODJet *jetMC;
+  for(Int_t jetcand=0;jetcand<nMCJets;jetcand++){
+    jetMC=(AliAODJet*)arrayMCJets->UncheckedAt(jetcand);
+    // restrict jet eta and pT ranges
+    if(!fCutsHFjets->IsJetSelected(jetMC)){
+      AliDebug(AliLog::kDebug,Form("JetMC not selected: pT=%f, eta=%f!", jetMC->Pt(),jetMC->Eta()));
+      continue;
       }
-    //AliInfo(Form(cy"MC particles %d primaries %d"B,nMC, multMC ));
+    // For jet matching, consider only MC jets within required eta and pT range
+    count++;
+    listMCJets->AddAt(jetMC,count);
+    // Asking for at least 2 tracks in the jet
+    //TRefArray* reftracksMC=(TRefArray*)jetMC->GetRefTracks();
+    //Int_t ntrksMC=reftracksMC->GetEntriesFast();
+    //if(ntrksMC<3)continue;
 
-    // Loop on MC jets
-    Int_t nMCJets=arrayMCJets->GetEntries();
-    AliAODJet *jetMC;
-    for(Int_t jetcand=0;jetcand<nMCJets;jetcand++){
-      jetMC=(AliAODJet*)arrayMCJets->UncheckedAt(jetcand);
-      // restrict jet eta and pT ranges
-      if(!fCutsHFjets->IsJetSelected(jetMC)){
-        AliDebug(AliLog::kDebug,Form("JetMC not selected: pT=%f, eta=%f!", jetMC->Pt(),jetMC->Eta()));
-        continue;
+    // Get jet flavour from 3 methods
+    Double_t partonnatMC[3];
+    Double_t ptpartMC[3];
+    Double_t contributionMC=0; // pT weight of mother parton (only method 1)
+    GetFlavour3Methods(jetMC, partonnatMC, ptpartMC, contributionMC);
+    // choose method to tag MC jets
+    if (partonnatMC[0]>3.99) mcBJets[count]=1;
+    //Printf(MAG"Partonnat %f flag %d"B, partonnatMC[0], mcBJets.At(count));
+    // Fill container tagger
+    step=AliHFJetsContainer::kCFStepAll;
+    fhBJets->FillStepBJets(step,multMC,jetMC,0,partonnatMC,contributionMC,ptpartMC[0]);
+    if (flagTriggered) {
+      step=AliHFJetsContainer::kCFStepTriggered;
+      fhBJets->FillStepBJets(step,multMC,jetMC,0,partonnatMC,contributionMC,ptpartMC[0]);
+      if (flagVertex) {
+        step=AliHFJetsContainer::kCFStepVertex;
+        fhBJets->FillStepBJets(step,multMC,jetMC,0,partonnatMC,contributionMC,ptpartMC[0]);
+        }
       }
-      // Asking for at least 2 tracks in the jet
-      //TRefArray* reftracksMC=(TRefArray*)jetMC->GetRefTracks();
-      //Int_t ntrksMC=reftracksMC->GetEntriesFast();
-      //if(ntrksMC<3)continue;
+   } // end loop on jets
 
-      // Get jet flavour from 3 methods
-      Double_t partonnatMC[3];
-      Double_t ptpartMC[3];
-      Double_t contributionMC=0;
-      // contribution = pT weight of mother parton (only method 1)
-      GetFlavour3Methods(jetMC, partonnatMC, ptpartMC, contributionMC);
-      // Fill container tagger
-      //fhBJets->FillStepBJets(step,multMC,jetMC,0,partonnatMC,contributionMC,ptpartMC[0]);
-    } // end loop on jets
-
-  } // end if (fCorrMode)
-
-  //PostData(1,fNentries);
-  PostData(1,fOutputList);
-  //PostData(2,fhJets);
-  //PostData(3,fhQaVtx);
-  //PostData(4,fhBJets);
-  //PostData(5,fhJetVtx);
-  //delete fArrayMC;
-  //delete partonnatMC;
-  //delete ptpartMC;
-  //fbJetArray->Clear();
-  return;
-
-  if (1){
-  // AOD primary vertex (for event selection)
-  AliAODVertex *vtx1 = (AliAODVertex*)aod->GetPrimaryVertex();
-  TString primTitle = vtx1->GetTitle();
-  // require "VertexerTracks" and at least 1 contributor
-  if(primTitle.Contains("VertexerTracks") && vtx1->GetNContributors()>0) {
-    fNentries->Fill(2); // EvGoodVtx  
-  }else {
-    AliDebug(AliLog::kDebug,"Event did not pass primary vertex selection!");
-    PostData(1,fOutputList);
-    return;
-  }
-
-  // Convert to AliESDVertex 
+  if (!flagVertex) return;
+  //listMCJets->Print();
+ 
+  // Convert to AliESDVertex // mettere in metodo separato nel task, mi servira' anche dopo 
   Double_t primvtx[3],primcov[6];
   vtx1->GetXYZ(primvtx);
   vtx1->GetCovarianceMatrix(primcov);
@@ -326,31 +342,31 @@ void AliAnalysisTaskSEHFJets::UserExec(Option_t */*option*/){
   Double_t magzkG = (Double_t)aod->GetMagneticField();
 
   // MC information (vertex and particles)
+  // (se sono in corrections-mode deve essere per forza MC...)
   TClonesArray *arrayMC=0x0;
   AliAODMCHeader *aodmcHeader=0x0;
   Double_t vtxTrue[3];
 
-  if(fCorrMode){
-    // load MC particles
-    arrayMC =
-      (TClonesArray*)aod->GetList()->FindObject(AliAODMCParticle::StdBranchName());
-    if(!arrayMC) AliError(RED"MC particles branch not found!"B);
+  // load MC particles
+  arrayMC =
+    (TClonesArray*)aod->GetList()->FindObject(AliAODMCParticle::StdBranchName());
+  if(!arrayMC) AliError(RED"MC particles branch not found!"B);
 
-    // load MC header
-    aodmcHeader =
-      (AliAODMCHeader*)aod->GetList()->FindObject(AliAODMCHeader::StdBranchName());
-    if(!aodmcHeader) AliError(RED"MC header branch not found!"B);
+  // load MC header
+  aodmcHeader =
+    (AliAODMCHeader*)aod->GetList()->FindObject(AliAODMCHeader::StdBranchName());
+  if(!aodmcHeader) AliError(RED"MC header branch not found!"B);
 
-    // MC primary vertex
-    aodmcHeader->GetVertex(vtxTrue);
-  }
+  // MC primary vertex
+  aodmcHeader->GetVertex(vtxTrue);
 
 
-  // Loop on jets
+  // Loop on jets (clusterized on RECO particles)
   Int_t nJets=arrayJets->GetEntries();
   AliAODJet *jet;
 
   Int_t nvtx=0;
+  count=-1;
   for(Int_t jetcand=0;jetcand<nJets;jetcand++){
     nvtx=0;
     jet=(AliAODJet*)arrayJets->UncheckedAt(jetcand);
@@ -360,86 +376,72 @@ void AliAnalysisTaskSEHFJets::UserExec(Option_t */*option*/){
       continue;
     }
 
-    Double_t partonnat[3]={0.,0.,0.};
-    Double_t ptpart[3]={-1.,-1.,-1.};
-    Double_t contribution=0.;
-    // contribution = pT weight of mother parton (only method 1)
+    // Get jet flavour from 3 methods
+    Double_t partonnat[3];
+    Double_t ptpart[3];
+    Double_t contribution=0; // pT weight of mother parton (only method 1)
+    GetFlavour3Methods(jet, partonnat, ptpart, contribution);
+    Printf(MAG"Partonnat %f flag %d"B, partonnat[0], mcBJets.At(count));
 
-    if(fCorrMode){ // THIS MAKES SENSE ONLY FOR MC
-      AliAODMCParticle *parton[3];
-      parton[0]=fTagger->IsMCJet(arrayMC,jet,contribution); // method 1
-      parton[1]=(AliAODMCParticle*)fTagger->IsMCJetParton(arrayMC,jet); // method 2
-      parton[2]=(AliAODMCParticle*)fTagger->IsMCJetMeson(arrayMC,jet); // method 3
-
-      if(parton[0]){
-        Int_t pdg=TMath::Abs(parton[0]->PdgCode());
-        if(pdg==4 || pdg==5) AliInfo(Form(cy"track method -> pdg parton: %d, contribution =%f"B,pdg,contribution));
-        if(pdg==21)partonnat[0]=1;
-        else if(pdg<4)partonnat[0]=2;
-        else if(pdg==4)partonnat[0]=3;
-        else if(pdg==5)partonnat[0]=4;
-        ptpart[0]=parton[0]->Pt();
-      }
-
-      if(parton[1]!=0){
-        Int_t pdg=TMath::Abs(parton[1]->PdgCode());
-        if(pdg==4 || pdg==5) AliInfo(Form(cy"parton method -> pdg parton: %d"B,pdg));
-        if(pdg==21)partonnat[1]=1;
-        else if(pdg<4)partonnat[1]=2;
-        else if(pdg==4)partonnat[1]=3;
-        else if(pdg==5)partonnat[1]=4;
-        ptpart[1]=parton[1]->Pt();
-      }
-
-      if(parton[2]!=0){
-        Int_t pdg=TMath::Abs(parton[2]->PdgCode());
-        if((pdg>=400 && pdg<=600) || (pdg>=4000 && pdg<=6000)) AliInfo(Form(cy"meson method -> pdg parton: %d"B,pdg));
-        if((pdg>=400 && pdg<=500) || (pdg>=4000 && pdg<=5000))partonnat[2]=3;
-        else{
-          if((pdg>=500 && pdg<=600) || (pdg>=5000 && pdg<=6000))partonnat[2]=4;
-          else partonnat[2]=2;
-        }
-
-        ptpart[2]=parton[2]->Pt();
-      }
-    }
-
-    TRefArray* reftracks=(TRefArray*)jet->GetRefTracks();
-    Double_t ntrks=reftracks->GetEntriesFast();
     // Asking for at leas 2 tracks in the jet
-    if(ntrks<3)continue;
+    //TRefArray* reftracks=(TRefArray*)jet->GetRefTracks();
+    //Double_t ntrks=reftracks->GetEntriesFast();
+    //Printf(MAG"REFTRACKS: %f"B, ntrks);
+    //if(ntrks<3)continue;
 
+    step = AliHFJetsContainer::kCFStepRecoB;
     // Fill container jets
-    //Int_t mult = 1; // dummy value for the moment TODO
-    //AliHFJetsContainer::CFSteps step;
-    step = AliHFJetsContainer::kCFStepVertex;
-    fhJets->FillStepJets(step,mult,jet,partonnat,contribution,ptpart);
+    fhJets->FillStepJets(step,multMC,jet,partonnat,contribution,ptpart);
     // Run b-tagger
-    // THIS MAKES SENSE ALSO FOR DATA
     nvtx=fTagger->FindVertices(jet,aod,v1,magzkG,fbJetArray,arrDispersion);
     //printf(" %d vertices, %d array size\n",nvtx,fbJetArray->GetEntries());
     if(nvtx>0){
-
+      count++;
+      Printf(MAG"At least 1 vertex found!!!"B);
       // QA vertici prima di selezione  --> selezione gia` fatta in FindVertices
+      fhQaVtx->FillStepQaVtx(step,multMC,jet,fbJetArray,arrDispersion,nvtx,vtx1,arrayMC,partonnat);
       // Fill container vertices
-      fhQaVtx->FillStepQaVtx(step,mult,jet,fbJetArray,arrDispersion,nvtx,vtx1,arrayMC,partonnat);
-      fhJetVtx->FillStepJetVtx(step,mult,jet,fbJetArray,nvtx,vtx1,arrayMC,partonnat);
-      // SELECTION ??
+      fhJetVtx->FillStepJetVtx(step,multMC,jet,fbJetArray,nvtx,vtx1,arrayMC,partonnat);
 
       // Fill container tagger
-      //fhBJets->FillStepBJets(step,mult,jet,nvtx,partonnat,contribution,ptpart[0]);
-
+      fhBJets->FillStepBJets(step,multMC,jet,nvtx,partonnat,contribution,ptpart[0]);
+      // Jet Matching
+      TList *listTaggedJets=new TList();
+      //listTaggedJets->SetOwner(kTRUE);
+      listTaggedJets->AddAt(jet, 0);
+      listTaggedJets->Print();
+      listMCJets->Print();
+      Int_t genJets=100; // consider all generated jets
+      Int_t recJets=1; // consider only current reco jet
+      TArrayI matchIndex(1);
+      TArrayF pTFraction(1);
+      Int_t debug=100; // default is 0
+      Float_t maxDist=0.3; // default is 0.3
+      Int_t mode=2; // default is 1
+      AliAnalysisHelperJetTasks::GetJetMatching(listTaggedJets, recJets, listMCJets, genJets, matchIndex, pTFraction, debug, maxDist, mode);
+      Int_t index=matchIndex.At(0);
+      Printf(MAG"JET %d INDEX %d pT fraction %f"B,recJets, index, pTFraction.At(0));
+      AliAODJet * matchedJet;
+      if (index >= 0){
+         matchedJet=(AliAODJet*)listMCJets->At(index);
+         //Double_t fraction = AliAnalysisHelperJetTasks::GetFractionOfJet((AliAODJet*)listTaggedJets->At(0), (AliAODJet*)listMCJets->At(index),2);
+         Double_t fraction = jet->Pt()/matchedJet->Pt();
+         Printf(MAG"Fraction jet pT %f"B, fraction);
+         // for purity
+         step = AliHFJetsContainer::kCFStepMatchedAny;
+         fhBJets->FillStepBJets(step,multMC,matchedJet,nvtx,partonnat,contribution,ptpart[0]);
+         // for efficiency
+         step = AliHFJetsContainer::kCFStepMatchedB;
+         if (mcBJets.At(index)){
+            Printf(MAG"Matcehd to B-jet!!!"B);
+            fhBJets->FillStepBJets(step,multMC,matchedJet,nvtx,partonnat,contribution,ptpart[0]);
+            }
+      }
       fbJetArray->Clear();
-    }
-    else AliDebug(AliLog::kDebug,"*** nvtx=0 !! ***");
+    } else AliDebug(AliLog::kDebug,"*** nvtx=0 !! ***");
   }
-  } // end if(0)
-  //PostData(1,fNentries);
+
   PostData(1,fOutputList);
-  //PostData(2,fhJets);
-  //PostData(3,fhQaVtx);
-  //PostData(4,fhBJets);
-  //PostData(5,fhJetVtx);
 
   //delete v1;
   //delete fArrayMC; 

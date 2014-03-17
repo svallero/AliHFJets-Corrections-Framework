@@ -48,7 +48,9 @@ class AliAnalysisTaskSEHFJets : public AliAnalysisTaskSE {
   virtual void LocalInit() {Init();}
   virtual void UserExec(Option_t *option);
   virtual void Terminate(Option_t *option);  
- 
+
+  void AnalyseCorrectionsMode();
+
   // Setters/Getters
   void SetCorrectionsMode(Bool_t mode) {fCorrMode = mode;}
   void SetRecoJetsBranch(const char* branch) {fRecoJetsBranch = branch;}

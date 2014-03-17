@@ -11,8 +11,8 @@ void RunSara()
   //TString mode = "local";
 
   // Load configuration
-  //gROOT->LoadMacro("ConfigurationOrig.C");
-  gROOT->LoadMacro("ConfigurationVAF.C");
+  gROOT->LoadMacro("Configuration.C");
+  //gROOT->LoadMacro("ConfigurationVAF.C");
 
   // Set paths
   gSystem->SetIncludePath(includepath.Data()); 

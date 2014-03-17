@@ -61,6 +61,8 @@ class AliHFJetsContainer : public TNamed
   AliCFContainer* GetContainer() { return fContainer; }
  
   void SetContainer(AliCFContainer* hist) { fContainer = hist; }
+ 
+  void CloneStep(CFSteps step1, CFSteps step2); // copy contents of step1 to step2
 
   // Print variables and steps
   void PrintVars();
