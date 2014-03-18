@@ -101,7 +101,7 @@ AliAnalysisGrid* CreateAlienHandler(){
   plugin->SetUser(user.Data());
 
   // General configuration
-  plugin->SetNtestFiles(1);
+  plugin->SetNtestFiles(3);
   plugin->SetAnalysisMacro(Form("%s.C",name.Data()));
   plugin->SetJDLName(Form("%s.jdl",name.Data()));
   plugin->SetExecutable(Form("%s.sh",name.Data()));

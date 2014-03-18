@@ -247,7 +247,7 @@ void AliHFJetsContainer::GetBinning(TString var, Int_t& nBins,Double_t* bins, co
 	Float_t binmin=0., binmax=0.;    
 	if (var.EqualTo("mult")){
 		axistitle="Multiplicity";
-		nBins = 100; binmin= 0.5; binmax= 100.5;
+		nBins = 1000; binmin= 0.5; binmax= 1000.5;
 	} else if (var.EqualTo("jetPt")){
 		axistitle="p_{T,jet} (GeV/c)";
 		nBins = 50; binmin= 5.; binmax= 55.;

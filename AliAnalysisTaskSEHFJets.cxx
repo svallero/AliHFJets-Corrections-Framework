@@ -184,12 +184,8 @@ void AliAnalysisTaskSEHFJets::UserCreateOutputObjects(){
   fOutputList->Add(fhJetVtx);
 
 
-  //PostData(1,fNentries);
   PostData(1,fOutputList);
-  //PostData(2,fhJets);
-  //PostData(3,fhQaVtx);
-  //PostData(4,fhBJets);
-  //PostData(5,fhJetVtx);
+
 }
 
 
@@ -300,13 +296,16 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
       AliDebug(AliLog::kDebug,Form("JetMC not selected: pT=%f, eta=%f!", jetMC->Pt(),jetMC->Eta()));
       continue;
       }
+
     // For jet matching, consider only MC jets within required eta and pT range
-    count++;
-    listMCJets->AddAt(jetMC,count);
+    
     // Asking for at least 2 tracks in the jet
     //TRefArray* reftracksMC=(TRefArray*)jetMC->GetRefTracks();
     //Int_t ntrksMC=reftracksMC->GetEntriesFast();
     //if(ntrksMC<3)continue;
+    
+    count++;
+    listMCJets->AddAt(jetMC,count);
 
     // Get jet flavour from 3 methods
     Double_t partonnatMC[3];
@@ -314,7 +313,7 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
     Double_t contributionMC=0; // pT weight of mother parton (only method 1)
     GetFlavour3Methods(jetMC, partonnatMC, ptpartMC, contributionMC);
     // choose method to tag MC jets
-    if (partonnatMC[0]>3.99) mcBJets[count]=1;
+    if (partonnatMC[2]>3.99) mcBJets[count]=1;
     //Printf(MAG"Partonnat %f flag %d"B, partonnatMC[0], mcBJets.At(count));
     // Fill container tagger
     step=AliHFJetsContainer::kCFStepAll;
@@ -376,6 +375,12 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
       continue;
     }
 
+    // Asking for at leas 2 tracks in the jet
+    TRefArray* reftracks=(TRefArray*)jet->GetRefTracks();
+    Double_t ntrks=reftracks->GetEntriesFast();
+    //Printf(MAG"REFTRACKS: %f"B, ntrks);
+    if(ntrks<3)continue;
+
     // Get jet flavour from 3 methods
     Double_t partonnat[3];
     Double_t ptpart[3];
@@ -383,11 +388,6 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
     GetFlavour3Methods(jet, partonnat, ptpart, contribution);
     Printf(MAG"Partonnat %f flag %d"B, partonnat[0], mcBJets.At(count));
 
-    // Asking for at leas 2 tracks in the jet
-    //TRefArray* reftracks=(TRefArray*)jet->GetRefTracks();
-    //Double_t ntrks=reftracks->GetEntriesFast();
-    //Printf(MAG"REFTRACKS: %f"B, ntrks);
-    //if(ntrks<3)continue;
 
     step = AliHFJetsContainer::kCFStepRecoB;
     // Fill container jets

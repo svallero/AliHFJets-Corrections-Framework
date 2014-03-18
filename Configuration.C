@@ -14,9 +14,12 @@ TString boost="boost::v1_51_0";
 TString cgal="cgal::v4.0.2";
 TString fastjet="fastjet::v3.0.3";
 // data
-TString datadir="/alice/sim/2013/LHC13d18d";
-TString datapattern="AOD/*AliAOD.root";
-TString runs="126082";
+//TString datadir="/alice/sim/2013/LHC13d18d";
+//TString datapattern="AOD/*AliAOD.root";
+//TString runs="126082";
+TString datadir="/alice/sim/LHC10f7a";
+TString datapattern="AOD100/*AliAOD.root";
+TString runs="130848";
 
 
 // --- include path --------------- 
@@ -49,7 +52,7 @@ void AddTasks(){
 
   // BTagging 
   gROOT->LoadMacro("AddTaskSEHFJets.C");
-  AliAnalysisTaskSEHFJets* taskJet=AddTaskSEHFJets("standard",2,"","c",0);
+  AliAnalysisTaskSEHFJets* taskJet=AddTaskSEHFJets("standard",2,"","c",0,1000);
   // Do not cut on max centrality
   //AliAnalysisTaskSEHFJets* taskJet=AddTaskSEHFJets("standard",2,"","c",0, 1000);
 
