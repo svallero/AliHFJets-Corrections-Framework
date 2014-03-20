@@ -277,22 +277,35 @@ void AliHFJetsContainer::GetBinning(TString var, Int_t& nBins,Double_t* bins, co
 	//return bins;
 }
 
-void AliHFJetsContainer::SetAxisRangeStep(const char* axisname, Double_t min, Double_t max, CFSteps step)
+void AliHFJetsContainer::SetAxisRangeStep(const char* axisname, Double_t min, Double_t max, CFSteps step, Bool_t overflow)
 {
 
 	AliInfo(Form(MAG"Setting range for axis: \"%s\" step: \"%s\""B, axisname, GetStepName(step)));
 	Int_t axis = GetVarAxis(axisname); 
 	//AliInfo(Form("Resetting axis %d", axis));
-
-	fContainer->GetAxis(axis, step)->SetRangeUser(min,max);
-
+        if (!overflow){ 
+	   fContainer->GetAxis(axis, step)->SetRangeUser(min,max);
+        } else {
+           Int_t startbin= fContainer->GetAxis(axis, step)->FindBin(min);
+           Int_t stopbin= fContainer->GetAxis(axis, step)->FindBin(max);
+           Int_t lastbin= fContainer->GetAxis(axis, step)->GetLast();
+           if (stopbin != lastbin) {
+             AliError(RED"You requested to include overflow, but your max bin is not the last!!!"B);
+             return;
+             }
+           Double_t ofw=fContainer->GetOverFlows(axis,step);
+           Printf("OVERFLOW: %f", ofw);
+           if (ofw > 0.0)stopbin=stopbin+1;
+           else AliInfo("No overflow, projecting up to last bin only!");
+	   fContainer->GetAxis(axis, step)->SetRange(startbin,stopbin);
+        }
 }
 
-void AliHFJetsContainer::SetAxisRangeAllSteps(const char* axisname, Double_t min, Double_t max)
+void AliHFJetsContainer::SetAxisRangeAllSteps(const char* axisname, Double_t min, Double_t max, Bool_t overflow)
 {
 
 	for (Int_t i=0; i<fgkCFSteps; i++){
-		SetAxisRangeStep(axisname, min, max, (CFSteps) i);
+		SetAxisRangeStep(axisname, min, max, (CFSteps) i, overflow);
 	}  
 
 }  

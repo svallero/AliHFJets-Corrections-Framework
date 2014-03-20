@@ -376,10 +376,10 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
     }
 
     // Asking for at leas 2 tracks in the jet
-    TRefArray* reftracks=(TRefArray*)jet->GetRefTracks();
-    Double_t ntrks=reftracks->GetEntriesFast();
+    //TRefArray* reftracks=(TRefArray*)jet->GetRefTracks();
+    //Double_t ntrks=reftracks->GetEntriesFast();
     //Printf(MAG"REFTRACKS: %f"B, ntrks);
-    if(ntrks<3)continue;
+    //if(ntrks<3)continue;
 
     // Get jet flavour from 3 methods
     Double_t partonnat[3];
@@ -395,14 +395,15 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
     // Run b-tagger
     nvtx=fTagger->FindVertices(jet,aod,v1,magzkG,fbJetArray,arrDispersion);
     //printf(" %d vertices, %d array size\n",nvtx,fbJetArray->GetEntries());
-    if(nvtx>0){
+    //if(nvtx>0){
+    if(1){ //*** TMP BY SV!!! ***
       count++;
       Printf(MAG"At least 1 vertex found!!!"B);
       // QA vertici prima di selezione  --> selezione gia` fatta in FindVertices
       fhQaVtx->FillStepQaVtx(step,multMC,jet,fbJetArray,arrDispersion,nvtx,vtx1,arrayMC,partonnat);
       // Fill container vertices
       fhJetVtx->FillStepJetVtx(step,multMC,jet,fbJetArray,nvtx,vtx1,arrayMC,partonnat);
-
+      Printf(RED"*** FILLING STEP %d ***"B, step);
       // Fill container tagger
       fhBJets->FillStepBJets(step,multMC,jet,nvtx,partonnat,contribution,ptpart[0]);
       // Jet Matching
@@ -432,7 +433,8 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
          fhBJets->FillStepBJets(step,multMC,matchedJet,nvtx,partonnat,contribution,ptpart[0]);
          // for efficiency
          step = AliHFJetsContainer::kCFStepMatchedB;
-         if (mcBJets.At(index)){
+         //if (mcBJets.At(index)){
+         if (mcBJets.At(index)){ // *** TMP BY SV!!! ***
             Printf(MAG"Matcehd to B-jet!!!"B);
             fhBJets->FillStepBJets(step,multMC,matchedJet,nvtx,partonnat,contribution,ptpart[0]);
             }

@@ -12,6 +12,7 @@ void RunSara()
 
   // Load configuration
   gROOT->LoadMacro("Configuration.C");
+  //gROOT->LoadMacro("ConfigurationOrig.C");
   //gROOT->LoadMacro("ConfigurationVAF.C");
 
   // Set paths
@@ -87,8 +88,8 @@ void RunSara()
 
   if(!mgr->InitAnalysis()) return;
   mgr->PrintStatus();
-  mgr->StartAnalysis(mode, chainAOD,10);
-  //mgr->StartAnalysis(mode, chainAOD);
+  //mgr->StartAnalysis(mode, chainAOD,10);
+  mgr->StartAnalysis(mode, chainAOD);
   return;
 }
 

@@ -69,8 +69,8 @@ class AliHFJetsContainer : public TNamed
   void PrintSteps(); 
 
   // Set/reset axis ranges
-  void SetAxisRangeStep(const char* axisname, Double_t min, Double_t max, CFSteps step);
-  void SetAxisRangeAllSteps(const char* axisname, Double_t min, Double_t max);
+  void SetAxisRangeStep(const char* axisname, Double_t min, Double_t max, CFSteps step, Bool_t overflow=kFALSE);
+  void SetAxisRangeAllSteps(const char* axisname, Double_t min, Double_t max, Bool_t overflow=kFALSE);
   void ResetAxisStep(const char* axisname, CFSteps step);
   void ResetAxisAllSteps(const char* axisname);
 
