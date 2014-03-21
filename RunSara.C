@@ -171,7 +171,7 @@ AliAnalysisGrid* CreateAlienHandler(){
   plugin->AddIncludePath(includepath.Data());
 
   // Merging
-  plugin->SetMergeViaJDL(kTRUE); 
+  plugin->SetMergeViaJDL(kFALSE); 
   plugin->SetOneStageMerging(kFALSE);
   plugin->SetMaxMergeStages(2);
   plugin->SetSplitMaxInputFileNumber(30);

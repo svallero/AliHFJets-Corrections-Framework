@@ -403,7 +403,7 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
       fhQaVtx->FillStepQaVtx(step,multMC,jet,fbJetArray,arrDispersion,nvtx,vtx1,arrayMC,partonnat);
       // Fill container vertices
       fhJetVtx->FillStepJetVtx(step,multMC,jet,fbJetArray,nvtx,vtx1,arrayMC,partonnat);
-      Printf(RED"*** FILLING STEP %d ***"B, step);
+      //Printf(RED"*** FILLING STEP %d ***"B, step);
       // Fill container tagger
       fhBJets->FillStepBJets(step,multMC,jet,nvtx,partonnat,contribution,ptpart[0]);
       // Jet Matching
@@ -434,7 +434,7 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
          // for efficiency
          step = AliHFJetsContainer::kCFStepMatchedB;
          //if (mcBJets.At(index)){
-         if (mcBJets.At(index)){ // *** TMP BY SV!!! ***
+         if (1){ // *** TMP BY SV!!! ***
             Printf(MAG"Matcehd to B-jet!!!"B);
             fhBJets->FillStepBJets(step,multMC,matchedJet,nvtx,partonnat,contribution,ptpart[0]);
             }
