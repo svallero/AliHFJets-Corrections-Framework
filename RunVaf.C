@@ -5,7 +5,7 @@ void RunVaf(){
   list->Add(new TNamed("ALIROOT_MODE", "AliRoot"));
 
   // Here extra AliRoot libs
-  TString alilibs("STEERBase:ESD:AOD:ANALYSIS:OADB:ANALYSISalice:CORRFW:PWGLFforward2:PWGHFbase:PWGflowBase:PWGflowTasks:PWGHFvertexingHF:JETAN:SISConePlugin:FASTJETAN:PWGJE");
+  TString alilibs("STEERBase:ESD:AOD:ANALYSIS:OADB:ANALYSISalice:CORRFW:PWGTools:PWGLFforward2:PWGHFbase:PWGflowBase:PWGflowTasks:PWGHFvertexingHF:JETAN:SISConePlugin:FASTJETAN:PWGJE");
   // Here FASTJET stuff
   TString fastjetlibs("CGAL:fastjet:siscone:siscone_spherical");
 
@@ -75,7 +75,7 @@ void AddTaskJetFinder(){
   // MC charged with full eta window (5)
   taskCl = AddTaskJetCluster("AODMC2","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.4,0,kTRUE,"",0.15,fTrackEtaWindow);
   // MC charged with restricted eta window
-  //taskCl = AddTaskJetCluster("AODMC2b","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.4,0,kTRUE,"",0.15,fTrackEtaWindow);
+  taskCl = AddTaskJetCluster("AODMC2b","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.4,0,kTRUE,"",0.15,fTrackEtaWindow);
 
 }
 
@@ -83,7 +83,7 @@ void AddTaskJetFinder(){
 void AddTaskBJets(){
 
   gROOT->LoadMacro("AddTaskSEHFJets.C");
-  AliAnalysisTaskSEHFJets* taskJet=AddTaskSEHFJets("standard",2,"","c",0);
+  AliAnalysisTaskSEHFJets* taskJet=AddTaskSEHFJets("standard",2,"","c",1000);
   // Do not cut on max centrality
   //AliAnalysisTaskSEHFJets* taskJet=AddTaskSEHFJets("standard",2,"","c",0, 1000);
 
