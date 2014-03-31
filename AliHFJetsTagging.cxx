@@ -26,6 +26,8 @@
 #include "AliHFJetsTagging.h"
 #include "AliLog.h"
 #include <TNamed.h>
+#include <TSystem.h>
+#include <TApplication.h>
 
 ClassImp(AliHFJetsTagging)
 
@@ -105,6 +107,9 @@ AliAODMCParticle* AliHFJetsTagging::IsMCJet(TClonesArray *arrayMC,const AliAODJe
   for(int k=0;k<num;++k){
 
     AliAODTrack * track = (AliAODTrack*)(jet->GetRefTracks()->At(k));
+    // the check below is necessary because there are few "bad" tracks which 
+    // are of type TObject and do not contain real track information
+    if (!track->InheritsFrom("AliAODTrack")) continue;
     if (track->GetLabel() >=0){
       AliAODMCParticle* part =  (AliAODMCParticle*)  arrayMC->At(track->GetLabel());
       if(!part)continue;

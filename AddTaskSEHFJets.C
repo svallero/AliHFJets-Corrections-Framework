@@ -111,7 +111,7 @@ void DefineCutsTask(AliAnalysisTaskSEHFJets *task, Float_t minC, Float_t maxC){
     // define cuts for task
     AliRDHFJetsCuts *cuts=new AliRDHFJetsCuts();
     // jets
-    cuts->SetJetRadius(0.4);
+    cuts->SetJetRadius(0.4); // this cut does nothing
     cuts->SetMaxEtaJet(0.5);//0.9-R
     cuts->SetMinPtJet(5);
     cuts->SetMaxPtJet(200);
