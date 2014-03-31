@@ -4,7 +4,7 @@ TString loadMacroPath="$ALICE_ROOT/PWGHF/vertexingHF/macros/";
 
 // GRID ---------------------------
 TString user="svallero";
-TString pluginmode="test";
+TString pluginmode="full";
 TString name="AnalysisBjets";
 // packages
 TString api="V1.1x";
@@ -13,14 +13,11 @@ TString aliroot="v5-05-45-AN";
 TString boost="boost::v1_43_0";
 TString cgal="cgal::v3.6";
 TString fastjet="fastjet::v2.4.2";
-//TString boost="boost::v1_51_0";
-//TString cgal="cgal::v4.0.2";
-//TString fastjet="fastjet::v3.0.3";
 // data
 TString datadir="/alice/sim/2013/LHC13d18d";
 TString datapattern="AOD/*AliAOD.root";
-TString runs="126359";
-//TString runs="126081 126082 126088 126090 126097 126158 126160 126167 126168 126283 126284 126350 126351 126352 126359 126404 126406 126407 126408 126409 126422126424 126425 126432 126437";
+//TString runs="126082";
+TString runs="126081 126082 126088 126090 126097 126158 126160 126167 126168 126283 126284 126350 126351 126352 126359 126404 126406 126407 126408 126409 126422126424 126425 126432 126437";
 //TString datadir="/alice/sim/LHC10f7a";
 //TString datapattern="AOD100/*AliAOD.root";
 //TString runs="130848";
@@ -31,10 +28,10 @@ TString includepath=("-I. -I$ROOTSYS/include -I$ALICE_ROOT -I$ALICE_ROOT/include
 
 // --- libraries ------------------
 TString local_fastjet_path="/usr/local/lib";
-//TString loaddylibs=("libCGAL libfastjet libsiscone libsiscone_spherical");
-TString loaddylibs=("libCGAL libfastjet libsiscone libsiscone_spherical libfastjetplugins");
-//TString loadlibs=("libJETAN libSISConePlugin libFASTJETAN libPWGTools libPWGflowBase libPWGflowTasks libPWGmuon libPWGHFbase libPWGHFvertexingHF libPWGJE");
-TString loadlibs=("libJETAN libFASTJETAN libPWGTools libPWGflowBase libPWGflowTasks libPWGmuon libPWGHFbase libPWGHFvertexingHF libPWGJE");
+TString loaddylibs=("libCGAL libfastjet libsiscone libsiscone_spherical");
+//TString loaddylibs=("libCGAL libfastjet libsiscone libsiscone_spherical libfastjetplugins");
+TString loadlibs=("libJETAN libSISConePlugin libFASTJETAN libPWGTools libPWGflowBase libPWGflowTasks libPWGmuon libPWGHFbase libPWGHFvertexingHF libPWGJE");
+//TString loadlibs=("libJETAN libFASTJETAN libPWGTools libPWGflowBase libPWGflowTasks libPWGmuon libPWGHFbase libPWGHFvertexingHF libPWGJE");
 
 // --- analysis sources -----------
 //TString sources=("AliHFJetContainer AliRDHFJetsCuts AliRDHFJetsCutsVertex AliHFJetVertexTagging AliAnalysisTaskSEHFJets");
