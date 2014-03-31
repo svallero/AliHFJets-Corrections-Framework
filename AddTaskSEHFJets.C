@@ -34,8 +34,8 @@ AliAnalysisTaskSEHFJets* AddTaskSEHFJets(TString fileout="standard",Bool_t corre
   hfTask->SetCorrectionsMode(corrections_mode); // kFALSE for real data
 
   //Set the jets branch
-  hfTask->SetRecoJetsBranch("JetClusterAOD_ANTIKT04_B0_Filter00272_Cut00150_Skip00");
-  hfTask->SetMcJetsBranch("JetClusterAODMC2_ANTIKT04_B0_Filter00272_Cut00150_Skip00");
+  hfTask->SetRecoJetsBranch("JetClusterAOD_ANTIKT02_B0_Filter00272_Cut00150_Skip00");
+  hfTask->SetMcJetsBranch("JetClusterAODMC2_ANTIKT02_B0_Filter00272_Cut00150_Skip00");
 
   // Define the tagger
   AliHFJetsTaggingVertex *tagger=new AliHFJetsTaggingVertex();
@@ -112,7 +112,7 @@ void DefineCutsTask(AliAnalysisTaskSEHFJets *task, Float_t minC, Float_t maxC){
     AliRDHFJetsCuts *cuts=new AliRDHFJetsCuts();
     // jets
     cuts->SetJetRadius(0.4);
-    cuts->SetMaxEtaJet(0.5);//0.9-R
+    cuts->SetMaxEtaJet(0.9);//0.9-R
     cuts->SetMinPtJet(5);
     cuts->SetMaxPtJet(200);
     // Set centrality 
@@ -133,7 +133,7 @@ void DefineCutsTagger(AliHFJetsTaggingVertex *tg){
 
     // jets
     cuts2->SetJetRadius(0.4);
-    cuts2->SetMaxEtaJet(0.5);//0.9-R
+    cuts2->SetMaxEtaJet(0.9);//0.9-R
     cuts2->SetMinPtJet(5);
     cuts2->SetMaxPtJet(200);
     // tracks
