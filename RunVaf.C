@@ -25,9 +25,12 @@ void RunVaf(){
   gProof->EnablePackage("AliRoot.par", list);
 
   // Define dataset
-  TString dataset=("Find;BasePath=/alice/sim/2013/LHC13d18d/126082;FileName=AOD/*/AliAOD.root");
+  //TString dataset=("Find;BasePath=/alice/sim/2013/LHC13d18d/126082;FileName=AOD/*/AliAOD.root");
+  TString dataset=("Find;BasePath=/alice/sim/2013/LHC13d18d/;FileName=AOD/*/AliAOD.root");
   
-  
+  // Check the dataset before running the analysis!
+  gProof->ShowDataSet( dataset.Data() );  
+
   // Create AnalysisManager
   AliAnalysisManager *mgr  = new AliAnalysisManager("My Manager","My Manager");
   mgr->SetDebugLevel(10);
@@ -49,7 +52,7 @@ void RunVaf(){
  
   // Add tasks
   AddTaskJetFinder();
-  //AddTaskBJets(); 
+  AddTaskBJets(); 
 
   // Start analysis
   Int_t nentries=100;
@@ -71,11 +74,11 @@ void AddTaskJetFinder(){
 
   gROOT->LoadMacro("AddTaskJetCluster.C");
   AliAnalysisTaskJetCluster *taskCl = 0;
-  taskCl = AddTaskJetCluster("AOD","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.4,0,kTRUE,"",0.15,fTrackEtaWindow);
+  taskCl = AddTaskJetCluster("AOD","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.2,0,kTRUE,"",0.15,fTrackEtaWindow);
   // MC charged with full eta window (5)
-  taskCl = AddTaskJetCluster("AODMC2","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.4,0,kTRUE,"",0.15,fTrackEtaWindow);
+  taskCl = AddTaskJetCluster("AODMC2","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.2,0,kTRUE,"",0.15,fTrackEtaWindow);
   // MC charged with restricted eta window
-  taskCl = AddTaskJetCluster("AODMC2b","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.4,0,kTRUE,"",0.15,fTrackEtaWindow);
+  taskCl = AddTaskJetCluster("AODMC2b","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.2,0,kTRUE,"",0.15,fTrackEtaWindow);
 
 }
 

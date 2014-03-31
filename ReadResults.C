@@ -29,6 +29,8 @@ void ReadResults(){
     //TString vars("kCFJetPt;kCFJetEta;kCFJetPhi;nRecoVtx;SumMass3MostDispl;Lxy1;Lxy2;Lxy3;mass1;mass2;mass3;nReal1;nReal2;nReal3;nFromB1;nFromB2;nFromB3;nFromPrD1;nFromPrD2;nFromPrD3;partDP;partBP;partBH");
     //TString vars("nRecoVtx");
     new TCanvas("c1");
+    // Restrict eta range of MC jets
+    hfcont->SetAxisRangeAllSteps("kCFJetEta", -0.5, 0.5);
     TH1D *heffpt = (TH1D*)hfcont->GetEfficiencyPt();
     heffpt->DrawCopy();
     //new TCanvas("c2");

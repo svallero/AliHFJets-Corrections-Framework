@@ -101,10 +101,11 @@ AliAODMCParticle* AliHFJetsTagging::IsMCJet(TClonesArray *arrayMC,const AliAODJe
 
   int counter =0;
   int num = jet->GetRefTracks()->GetEntries();
-
   for(int k=0;k<num;++k){
 
     AliAODTrack * track = (AliAODTrack*)(jet->GetRefTracks()->At(k));
+    if (!track) continue; // NEW BY SV
+    if (!(track->GetLabel())) continue; // NEW BY SV
     if (track->GetLabel() >=0){
       AliAODMCParticle* part =  (AliAODMCParticle*)  arrayMC->At(track->GetLabel());
       if(!part)continue;

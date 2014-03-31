@@ -118,16 +118,16 @@ AliAnalysisTaskSEHFJets::~AliAnalysisTaskSEHFJets(){
   AliInfo("+++ Executing Destructor +++");
 
   // Do not delete outputs in proof mode or merging will fail
-  //if (!AliAnalysisManager::GetAnalysisManager()->IsProofMode()){
-  //   if (fOutputList) delete fOutputList;
-  //   if (fhJets) delete fhJets;
-  //   if (fhQaVtx) delete fhQaVtx;
-  //   if (fhBJets) delete fhBJets;
-  //   if (fhJetVtx) delete fhJetVtx;
-  //}
+  if (!AliAnalysisManager::GetAnalysisManager()->IsProofMode()){
+     if (fOutputList) delete fOutputList;
+     if (fhJets) delete fhJets;
+     if (fhQaVtx) delete fhQaVtx;
+     if (fhBJets) delete fhBJets;
+     if (fhJetVtx) delete fhJetVtx;
+  }
 
-  //if (fTagger) delete fTagger;
-  //if (fCutsHFjets) delete fCutsHFjets;
+  if (fTagger) delete fTagger;
+  if (fCutsHFjets) delete fCutsHFjets;
 }
 
 //________________________________________________________________________
@@ -291,11 +291,14 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
   AliAODJet *jetMC;
   for(Int_t jetcand=0;jetcand<nMCJets;jetcand++){
     jetMC=(AliAODJet*)arrayMCJets->UncheckedAt(jetcand);
+    if (!jetMC) continue; 
     // restrict jet eta and pT ranges
     if(!fCutsHFjets->IsJetSelected(jetMC)){
       AliDebug(AliLog::kDebug,Form("JetMC not selected: pT=%f, eta=%f!", jetMC->Pt(),jetMC->Eta()));
       continue;
       }
+    // *** TMP BY SV
+    //if (TMath::Abs(jetMC->Eta()) > 0.5) continue;
 
     // For jet matching, consider only MC jets within required eta and pT range
     
@@ -374,6 +377,8 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
       AliDebug(AliLog::kDebug,Form("Jet not selected: pT=%f, eta=%f!", jet->Pt(),jet->Eta()));
       continue;
     }
+    
+
 
     // Asking for at leas 2 tracks in the jet
     //TRefArray* reftracks=(TRefArray*)jet->GetRefTracks();
