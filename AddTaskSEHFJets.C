@@ -34,8 +34,9 @@ AliAnalysisTaskSEHFJets* AddTaskSEHFJets(TString fileout="standard",Bool_t corre
   hfTask->SetCorrectionsMode(corrections_mode); // kFALSE for real data
 
   //Set the jets branch
-  hfTask->SetRecoJetsBranch("JetClusterAOD_ANTIKT04_B0_Filter00272_Cut00150_Skip00");
-  hfTask->SetMcJetsBranch("JetClusterAODMC2_ANTIKT04_B0_Filter00272_Cut00150_Skip00");
+  // radius is hardcoded here, should be changed TODO
+  hfTask->SetRecoJetsBranch("JetClusterAOD_ANTIKT03_B0_Filter00272_Cut00150_Skip00");
+  hfTask->SetMcJetsBranch("JetClusterAODMC2_ANTIKT03_B0_Filter00272_Cut00150_Skip00");
 
   // Define the tagger
   AliHFJetsTaggingVertex *tagger=new AliHFJetsTaggingVertex();
@@ -69,35 +70,7 @@ AliAnalysisTaskSEHFJets* AddTaskSEHFJets(TString fileout="standard",Bool_t corre
   AliAnalysisDataContainer *cinput =   mgr->GetCommonInputContainer();
   mgr->ConnectInput(hfTask,0,cinput);
  
-  // Simple histogram to count events
-  //containername="outputNentries";
-  //containername.Prepend(containerprefix.Data());
-  //containername.Append(str.Data());
-  //AliAnalysisDataContainer *coutputNentries = mgr->CreateContainer(containername.Data(), TH1F::Class(), AliAnalysisManager::kOutputContainer, fileout.Data());
-  //mgr->ConnectOutput(hfTask,1,coutputNentries);
-
-  // Containeris for jets and vertices properties
-  if (0){
-     //TString names("Jets;QaVtx;BJets;JetVtx");
-     TString names("Jets");
-     TObjArray *arr;
-     TObjString *objstr;
-     arr = names.Tokenize(";");
-     TIter next(arr);
-     Int_t i=0;
-     AliAnalysisDataContainer *containerJets[4];
-     while ((objstr=(TObjString*)next())){
-       containername=objstr->GetString();
-       containername.Prepend(containerprefix.Data());
-       containername.Append(str.Data());
-       containerJets[i] = mgr->CreateContainer(containername.Data(),AliHFJetsContainerVertex::Class(),AliAnalysisManager::kOutputContainer, fileout.Data());
-       mgr->ConnectOutput(hfTask,i+2,containerJets[i]);
-       i++;
-     }
-   }
-  
   // All containers in a list
-  //AliAnalysisDataContainer *coutput = mgr->CreateContainer("HFJets_containers",TList::Class(),AliAnalysisManager::kOutputContainer,fileout.Data());
   AliAnalysisDataContainer *coutput = mgr->CreateContainer("HFJets_containers",TList::Class(),AliAnalysisManager::kOutputContainer,AliAnalysisManager::GetCommonFileName());
   mgr->ConnectOutput(hfTask,1,coutput);
   

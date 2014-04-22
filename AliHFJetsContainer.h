@@ -41,7 +41,8 @@ class AliHFJetsContainer : public TNamed
   // standard container for spectrum corrections
   AliHFJetsContainer(const char* name="", Bool_t dummy = kTRUE);
   // add custom variables to standard, in this way the correction procedure is preserved
-  AliHFJetsContainer(const char* name, const Int_t nvars, const char* varnames[], Int_t *nbins, Double_t *binning[], const char* axistitle[]);
+  //AliHFJetsContainer(const char* name, const Int_t nvars, const char* varnames[], Int_t *nbins, Double_t *binning[], const char* axistitle[]);
+  AliHFJetsContainer(const char* name, const Int_t nvars, const char* varnames[], Int_t *nbins, Double_t **binning, const char* axistitle[]);
   AliHFJetsContainer(const AliHFJetsContainer &c);
   // Destructor
   virtual ~AliHFJetsContainer();
@@ -100,8 +101,10 @@ class AliHFJetsContainer : public TNamed
   Double_t *fBinning[fgkCFVars];     // set of bins for each variable
   //Double_t *fBinning[100];     // set of bins for each variable
   const char *fAxisTitle[fgkCFVars]; // axis title for each variable
-  void CreateContainer(TString name, TString title, Int_t nvars, Int_t *nbins, Double_t *binning[], const char *axistitle[]); // create containers belonging to this class
-  void CreateCustomContainer(const Int_t nvars, const char* varnames[], Int_t *nbins, Double_t *binning[], const char*  axistitle[]);
+  //void CreateContainer(TString name, TString title, Int_t nvars, Int_t *nbins, Double_t *binning[], const char *axistitle[]); // create containers belonging to this class
+  void CreateContainer(TString name, TString title, Int_t nvars, Int_t *nbins, Double_t **binning, const char *axistitle[]); // create containers belonging to this class
+  //void CreateCustomContainer(const Int_t nvars, const char* varnames[], Int_t *nbins, Double_t *binning[], const char*  axistitle[]);
+  void CreateCustomContainer(const Int_t nvars, const char* varnames[], Int_t *nbins, Double_t **binning, const char*  axistitle[]);
   void CreateDefaultBinning();       // sets default axis binning
   const char* GetStepName(CFSteps step); // returns name of enum
   const char* GetVarName(CFVars var);    // returns name of enum

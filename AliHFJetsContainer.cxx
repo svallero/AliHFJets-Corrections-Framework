@@ -53,11 +53,11 @@ ClassImp(AliHFJetsContainer)
 	//  AliInfo("Creating dummy container."); 
 	//}
 
-	AliHFJetsContainer::AliHFJetsContainer(const char* name, Bool_t dummy): 
-		TNamed(name,name),
-		fCustomVarNames(0x0),
-		fContainer(0)
-{
+AliHFJetsContainer::AliHFJetsContainer(const char* name, Bool_t dummy): 
+	TNamed(name,name),
+	fCustomVarNames(0x0),
+	fContainer(0){
+
 	for (Int_t k=0; k<fgkCFVars; k++){
 		fBinning[k] = new Double_t[1000];
 	}
@@ -75,7 +75,8 @@ ClassImp(AliHFJetsContainer)
 
 }
 
-AliHFJetsContainer::AliHFJetsContainer(const char* name, const Int_t nvars, const char* varnames[], Int_t *nbins, Double_t *binning[], const char*  axistitle[]): 
+//AliHFJetsContainer::AliHFJetsContainer(const char* name, const Int_t nvars, const char* varnames[], Int_t *nbins, Double_t *binning[], const char*  axistitle[]): 
+AliHFJetsContainer::AliHFJetsContainer(const char* name, const Int_t nvars, const char* varnames[], Int_t *nbins, Double_t **binning, const char*  axistitle[]): 
 	TNamed(name,name),
 	fCustomVarNames(0x0),
 	fContainer(0)
@@ -113,6 +114,7 @@ AliHFJetsContainer::~AliHFJetsContainer()
 	// Delete arrays 
 	for (Int_t k=0; k<fgkCFVars; k++){
 		delete [] fBinning[k];
+                fBinning[k]=0;
 	}
 }
 
@@ -186,7 +188,8 @@ Long64_t AliHFJetsContainer::Merge(TCollection* list)
 }
 
 //----------------------------------------------------------------
-void AliHFJetsContainer::CreateContainer(TString name, TString title, Int_t nvars, Int_t *nbins, Double_t *binning[], const char *axistitle[])
+//void AliHFJetsContainer::CreateContainer(TString name, TString title, Int_t nvars, Int_t *nbins, Double_t *binning[], const char *axistitle[])
+void AliHFJetsContainer::CreateContainer(TString name, TString title, Int_t nvars, Int_t *nbins, Double_t **binning, const char *axistitle[])
 {
 
 	fContainer = new AliCFContainer(name, title, fgkCFSteps,nvars,nbins);
@@ -201,7 +204,8 @@ void AliHFJetsContainer::CreateContainer(TString name, TString title, Int_t nvar
 
 
 //----------------------------------------------------------------
-void AliHFJetsContainer::CreateCustomContainer(const Int_t nvars, const char* varnames[], Int_t *nbins, Double_t *binning[], const char*  axistitle[]){
+//void AliHFJetsContainer::CreateCustomContainer(const Int_t nvars, const char* varnames[], Int_t *nbins, Double_t *binning[], const char*  axistitle[]){
+void AliHFJetsContainer::CreateCustomContainer(const Int_t nvars, const char* varnames[], Int_t *nbins, Double_t **binning, const char*  axistitle[]){
 
 	AliInfo(MAG"Creating custom container: standard variables will be added at positions 0,1,2,3!"B);
 
@@ -272,7 +276,7 @@ void AliHFJetsContainer::GetBinning(TString var, Int_t& nBins,Double_t* bins, co
 	for (Int_t j=0; j<nBins+1; j++){
 		if (j==0) bins[j]= binmin;
 		else bins[j] = bins[j-1]+binwidth;
-		//Printf("*** Bin %d value %f",j, bins[j]);
+		//Printf(RED"*** Bin %d value %f"B,j, bins[j]);
 	}
 	//return bins;
 }

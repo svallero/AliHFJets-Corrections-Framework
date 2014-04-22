@@ -38,7 +38,7 @@ void efficiencySupraya(Float_t mass=0.,Int_t partonmethod=2, Float_t pt=10. ){
   TString outdir="plots_test";
   //TFile* f=new TFile("AnalysisResultsOldSet.root","r");
   //TFile* f=new TFile("AnalysisResultsSara.root","r");
-  TFile* f=new TFile("AnalysisResults.root","r");
+  TFile* f=new TFile("AnalysisResultsHFCJ.root","r");
 
   TList *dhf = (TList*)f->Get("HFJets_containers");
 

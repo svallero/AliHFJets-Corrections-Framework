@@ -261,7 +261,7 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
 
   // We should fill the container kBJets at each step for the correction procedure!
 
-  // Multiplicity
+  // Multiplicity MC (for vertex reco correction)
   // Get array of MC particles
   fArrayMC = (TClonesArray*)aod->GetList()->FindObject(AliAODMCParticle::StdBranchName());
   if(!fArrayMC) AliError(RED"MC particles branch not found!"B);
@@ -280,11 +280,11 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
   Int_t nMCJets=arrayMCJets->GetEntries();
   // also write jets on TList, needed for matching 
   TList *listMCJets=new TList();
-  //listMCJets->SetOwner(kTRUE);
+  listMCJets->SetOwner(kTRUE);
   TArrayI mcBJets(nMCJets); // = new TArrayI(nMCJets);
   mcBJets.Reset(0);
   // reco
-  TList * listJets=new TList();
+  //TList * listJets=new TList();
   //listJets->SetOwner(kTRUE);
   //Int_t recoBJets[];
   Int_t count=-1;
@@ -297,7 +297,8 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
       AliDebug(AliLog::kDebug,Form("JetMC not selected: pT=%f, eta=%f!", jetMC->Pt(),jetMC->Eta()));
       continue;
       }
-    // *** TMP BY SV
+ 
+    // this cut does nothing because eta selectoion is already in fCutsHFjets
     //if (TMath::Abs(jetMC->Eta()) > 0.5) continue;
 
     // For jet matching, consider only MC jets within required eta and pT range
@@ -315,8 +316,12 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
     Double_t ptpartMC[3];
     Double_t contributionMC=0; // pT weight of mother parton (only method 1)
     GetFlavour3Methods(jetMC, partonnatMC, ptpartMC, contributionMC);
-    // choose method to tag MC jets
-    if (partonnatMC[2]>3.99) mcBJets[count]=1;
+    // choose method to tag MC jets (should not be hardcoded TODO)
+    Int_t meth=2;
+    // this was only for 
+    if (partonnatMC[meth]>3.99) mcBJets[count]=1;
+    // this is for g,ud,s,c,b
+    //mcBJets[count]=partonnatMC[meth]; 
     //Printf(MAG"Partonnat %f flag %d"B, partonnatMC[0], mcBJets.At(count));
     // Fill container tagger
     step=AliHFJetsContainer::kCFStepAll;
@@ -327,6 +332,7 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
       if (flagVertex) {
         step=AliHFJetsContainer::kCFStepVertex;
         fhBJets->FillStepBJets(step,multMC,jetMC,0,partonnatMC,contributionMC,ptpartMC[0]);
+    	fhJets->FillStepJets(step,multMC,jetMC,partonnatMC,contributionMC,ptpartMC);
         }
       }
    } // end loop on jets
@@ -334,7 +340,7 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
   if (!flagVertex) return;
   //listMCJets->Print();
  
-  // Convert to AliESDVertex // mettere in metodo separato nel task, mi servira' anche dopo 
+  // Convert to AliESDVertex // mettere in metodo separato nel task, mi servira' anche dopo TODO 
   Double_t primvtx[3],primcov[6];
   vtx1->GetXYZ(primvtx);
   vtx1->GetCovarianceMatrix(primcov);
@@ -378,8 +384,6 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
       continue;
     }
     
-
-
     // Asking for at leas 2 tracks in the jet
     //TRefArray* reftracks=(TRefArray*)jet->GetRefTracks();
     //Double_t ntrks=reftracks->GetEntriesFast();
@@ -393,15 +397,14 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
     GetFlavour3Methods(jet, partonnat, ptpart, contribution);
     Printf(MAG"Partonnat %f flag %d"B, partonnat[0], mcBJets.At(count));
 
-
     step = AliHFJetsContainer::kCFStepRecoB;
     // Fill container jets
     fhJets->FillStepJets(step,multMC,jet,partonnat,contribution,ptpart);
     // Run b-tagger
     nvtx=fTagger->FindVertices(jet,aod,v1,magzkG,fbJetArray,arrDispersion);
     //printf(" %d vertices, %d array size\n",nvtx,fbJetArray->GetEntries());
-    //if(nvtx>0){
-    if(1){ //*** TMP BY SV!!! ***
+    if(nvtx>0){
+    //if(1){ //*** TMP BY SV!!! ***
       count++;
       Printf(MAG"At least 1 vertex found!!!"B);
       // QA vertici prima di selezione  --> selezione gia` fatta in FindVertices
@@ -413,10 +416,10 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
       fhBJets->FillStepBJets(step,multMC,jet,nvtx,partonnat,contribution,ptpart[0]);
       // Jet Matching
       TList *listTaggedJets=new TList();
-      //listTaggedJets->SetOwner(kTRUE);
+      listTaggedJets->SetOwner(kTRUE);
       listTaggedJets->AddAt(jet, 0);
-      listTaggedJets->Print();
-      listMCJets->Print();
+      //listTaggedJets->Print();
+      //listMCJets->Print();
       Int_t genJets=100; // consider all generated jets
       Int_t recJets=1; // consider only current reco jet
       TArrayI matchIndex(1);
@@ -430,6 +433,7 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
       AliAODJet * matchedJet;
       if (index >= 0){
          matchedJet=(AliAODJet*)listMCJets->At(index);
+         // funziona?
          //Double_t fraction = AliAnalysisHelperJetTasks::GetFractionOfJet((AliAODJet*)listTaggedJets->At(0), (AliAODJet*)listMCJets->At(index),2);
          Double_t fraction = jet->Pt()/matchedJet->Pt();
          Printf(MAG"Fraction jet pT %f"B, fraction);
@@ -438,10 +442,12 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
          fhBJets->FillStepBJets(step,multMC,matchedJet,nvtx,partonnat,contribution,ptpart[0]);
          // for efficiency
          step = AliHFJetsContainer::kCFStepMatchedB;
-         //if (mcBJets.At(index)){
-         if (1){ // *** TMP BY SV!!! ***
+         if (mcBJets.At(index)){
+         //if (1){ // *** TMP BY SV!!! ***
             Printf(MAG"Matcehd to B-jet!!!"B);
             fhBJets->FillStepBJets(step,multMC,matchedJet,nvtx,partonnat,contribution,ptpart[0]);
+            // here I can apply tagging cuts
+    	    fhJets->FillStepJets(step,multMC,matchedJet,partonnat,contribution,ptpart);
             }
       }
       fbJetArray->Clear();
@@ -450,7 +456,8 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
 
   PostData(1,fOutputList);
 
-  //delete v1;
+  delete v1;
+  //delete listMCJets;
   //delete fArrayMC; 
   //delete fCutsHFjets;
   //delete fTagger;

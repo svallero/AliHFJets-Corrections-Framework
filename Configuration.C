@@ -28,10 +28,10 @@ TString includepath=("-I. -I$ROOTSYS/include -I$ALICE_ROOT -I$ALICE_ROOT/include
 
 // --- libraries ------------------
 TString local_fastjet_path="/usr/local/lib";
-TString loaddylibs=("libCGAL libfastjet libsiscone libsiscone_spherical");
-//TString loaddylibs=("libCGAL libfastjet libsiscone libsiscone_spherical libfastjetplugins");
-TString loadlibs=("libJETAN libSISConePlugin libFASTJETAN libPWGTools libPWGflowBase libPWGflowTasks libPWGmuon libPWGHFbase libPWGHFvertexingHF libPWGJE");
-//TString loadlibs=("libJETAN libFASTJETAN libPWGTools libPWGflowBase libPWGflowTasks libPWGmuon libPWGHFbase libPWGHFvertexingHF libPWGJE");
+//TString loaddylibs=("libCGAL libfastjet libsiscone libsiscone_spherical");
+TString loaddylibs=("libCGAL libfastjet libsiscone libsiscone_spherical libfastjetplugins");
+//TString loadlibs=("libJETAN libSISConePlugin libFASTJETAN libPWGTools libPWGflowBase libPWGflowTasks libPWGmuon libPWGHFbase libPWGHFvertexingHF libPWGJE");
+TString loadlibs=("libJETAN libFASTJETAN libPWGTools libPWGflowBase libPWGflowTasks libPWGmuon libPWGHFbase libPWGHFvertexingHF libPWGJE");
 
 // --- analysis sources -----------
 //TString sources=("AliHFJetContainer AliRDHFJetsCuts AliRDHFJetsCutsVertex AliHFJetVertexTagging AliAnalysisTaskSEHFJets");
