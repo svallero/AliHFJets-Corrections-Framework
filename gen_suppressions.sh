@@ -1,12 +1,12 @@
 #!/bin/sh
 
 infile=$1
-outfile="suppressions_standard.supp"
+outfile="suppressions_standard_vaf.supp"
 #rm $outfile
 
 issupp=0
 count=0
-suppname="alien_possible_"
+suppname="jets_possible_"
 while read line; do
 	if [ "$line" = "{" ]; then
                 issupp=1

@@ -1,7 +1,7 @@
 void RunVaf(){
   
   // Local mode is needed to debug and run valgrind
-  const char *mode="proof"; // can be "proof" or "local"
+  const char *mode="local"; // can be "proof" or "local"
   
   // List of AliRoot parameters
   TList *list = new TList();
@@ -79,7 +79,8 @@ void RunVaf(){
   AddTaskBJets(); 
 
   // Start analysis
-  Int_t nentries=9999999999999;
+  //Int_t nentries=9999999999999;
+  Int_t nentries=10;
   Int_t firstentry=0;
   if(!mgr->InitAnalysis()) return;
   mgr->PrintStatus();

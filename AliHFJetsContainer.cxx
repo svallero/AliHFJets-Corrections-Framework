@@ -412,6 +412,12 @@ const char* AliHFJetsContainer::GetStepTitle(CFSteps step)
 			return "True B-jets (reco B-jet matches any true jet)";
 		case kCFStepRecoB:
 			return "Reconstructed B-jets";
+		case kCFStepMatchedC:
+			return "True jets (reco jet matches true C-jet)";
+		case kCFStepMatchedLight:
+			return "True jets (reco jet matches true light-jet)";
+		case kCFStepMatchedGluon:
+			return "True jets (reco jet matches true gluon-jet)";
 	}
 
 	return 0;
@@ -432,6 +438,12 @@ const char* AliHFJetsContainer::GetStepName(CFSteps step)
 			return "kCFStepMatchedAny";
 		case kCFStepRecoB:
 			return "kCFStepRecoB";
+		case kCFStepMatchedC:
+			return "kCFStepMatchedC";
+		case kCFStepMatchedLight:
+			return "kCFStepMatchedLight";
+		case kCFStepMatchedGluon:
+			return "kCFStepMatchedGluon";
 	}
 	return 0;
 }
@@ -524,10 +536,60 @@ TH1* AliHFJetsContainer::StepsRatio(CFSteps num, CFSteps denom, Int_t var1, Int_
 	return hnum;
 }
 
-TH1D* AliHFJetsContainer::GetEfficiencyPt()
+TH1D* AliHFJetsContainer::GetBEfficiencyPt(const char* method)
 {
-	TH1 *h = StepsRatio(kCFStepMatchedB, kCFStepVertex, kCFJetPt);
-	h->SetTitle("kCFStepMatchedB/kCFStepVertex");
+   TH1D *h = (TH1D*)GetEfficiencyPt(method, 4);
+   return h;
+}
+
+TH1D* AliHFJetsContainer::GetCEfficiencyPt(const char* method)
+{
+   TH1D *h = (TH1D*)GetEfficiencyPt(method, 3);
+   return h;
+}
+
+TH1D* AliHFJetsContainer::GetLightEfficiencyPt(const char* method)
+{
+   TH1D *h = (TH1D*)GetEfficiencyPt(method, 2);
+   return h;
+}
+
+TH1D* AliHFJetsContainer::GetGluonEfficiencyPt(const char* method)
+{
+   TH1D *h = (TH1D*)GetEfficiencyPt(method, 1);
+   return h;
+}
+
+TH1D* AliHFJetsContainer::GetEfficiencyPt(const char* method, Int_t flavour)
+{
+        // Determine step "matched" according to chosen flavour
+        CFSteps step_matched;
+        switch (flavour){
+	  case 1:
+	    step_matched = kCFStepMatchedGluon;
+            break;
+	  case 2:
+            step_matched = kCFStepMatchedLight;		
+            break;
+	  case 3:
+            step_matched = kCFStepMatchedC;		
+            break;
+	  case 4:
+            step_matched = kCFStepMatchedB;		
+            break;
+          default:
+            AliError(RED"Wrong flavour!"B);
+            break;
+        } 
+ 
+        // restric flavour of MC jet (denominator)
+        ResetAxisStep(method, kCFStepVertex);
+        SetAxisRangeStep(method,flavour-0.5,flavour+0.5, kCFStepVertex);
+        // restric flavour of RECO jet (numerator)
+        ResetAxisStep(method, step_matched);
+        SetAxisRangeStep(method,flavour-0.5,flavour+0.5, step_matched);
+	TH1 *h = StepsRatio(step_matched, kCFStepVertex, kCFJetPt);
+	h->SetTitle(Form("%s/kCFStepVertex",GetStepName(step_matched)));
 	return dynamic_cast<TH1D*>(h);
 }
 

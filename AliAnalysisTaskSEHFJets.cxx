@@ -280,7 +280,7 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
   Int_t nMCJets=arrayMCJets->GetEntries();
   // also write jets on TList, needed for matching 
   TList *listMCJets=new TList();
-  listMCJets->SetOwner(kTRUE);
+  //listMCJets->SetOwner(kTRUE);
   TArrayI mcBJets(nMCJets); // = new TArrayI(nMCJets);
   mcBJets.Reset(0);
   // reco
@@ -319,9 +319,9 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
     // choose method to tag MC jets (should not be hardcoded TODO)
     Int_t meth=2;
     // this was only for 
-    if (partonnatMC[meth]>3.99) mcBJets[count]=1;
+    //if (partonnatMC[meth]>3.99) mcBJets[count]=1;
     // this is for g,ud,s,c,b
-    //mcBJets[count]=partonnatMC[meth]; 
+    mcBJets[count]=partonnatMC[meth]; 
     //Printf(MAG"Partonnat %f flag %d"B, partonnatMC[0], mcBJets.At(count));
     // Fill container tagger
     step=AliHFJetsContainer::kCFStepAll;
@@ -433,6 +433,8 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
       AliAODJet * matchedJet;
       if (index >= 0){
          matchedJet=(AliAODJet*)listMCJets->At(index);
+         // below is to avoid matching more RECO jets to the same MC
+         listMCJets->RemoveAt(index);
          // funziona?
          //Double_t fraction = AliAnalysisHelperJetTasks::GetFractionOfJet((AliAODJet*)listTaggedJets->At(0), (AliAODJet*)listMCJets->At(index),2);
          Double_t fraction = jet->Pt()/matchedJet->Pt();
@@ -440,15 +442,31 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
          // for purity
          step = AliHFJetsContainer::kCFStepMatchedAny;
          fhBJets->FillStepBJets(step,multMC,matchedJet,nvtx,partonnat,contribution,ptpart[0]);
-         // for efficiency
-         step = AliHFJetsContainer::kCFStepMatchedB;
-         if (mcBJets.At(index)){
-         //if (1){ // *** TMP BY SV!!! ***
-            Printf(MAG"Matcehd to B-jet!!!"B);
-            fhBJets->FillStepBJets(step,multMC,matchedJet,nvtx,partonnat,contribution,ptpart[0]);
-            // here I can apply tagging cuts
-    	    fhJets->FillStepJets(step,multMC,matchedJet,partonnat,contribution,ptpart);
-            }
+         // efficiency for different flavours
+         switch (mcBJets.At(index))
+         {
+         case 1: // gluons
+            step = AliHFJetsContainer::kCFStepMatchedGluon;
+            //Printf(MAG"Matcehd to gluon-jet!!!"B);
+	    break;
+         case 2: // light quarks
+            step = AliHFJetsContainer::kCFStepMatchedLight;
+            //Printf(MAG"Matcehd to light-jet!!!"B);
+	    break;
+         case 3: // C 
+            step = AliHFJetsContainer::kCFStepMatchedC;
+            //Printf(MAG"Matcehd to C-jet!!!"B);
+	    break;
+         case 4: // B 
+            step = AliHFJetsContainer::kCFStepMatchedB;
+            //Printf(MAG"Matcehd to B-jet!!!"B);
+	    break;
+         default: // 0 is not defined, should never be the case...
+            AliInfo("Matching jet flavour not defined!");
+	    return;
+	    }
+         fhBJets->FillStepBJets(step,multMC,matchedJet,nvtx,partonnat,contribution,ptpart[0]);
+    	 fhJets->FillStepJets(step,multMC,matchedJet,partonnat,contribution,ptpart);
       }
       fbJetArray->Clear();
     } else AliDebug(AliLog::kDebug,"*** nvtx=0 !! ***");

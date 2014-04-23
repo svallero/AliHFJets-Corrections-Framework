@@ -28,8 +28,8 @@ class AliHFJetsContainer : public TNamed
 {
  public:
   // Analysis steps
-  static const Int_t fgkCFSteps = 6;
-  enum CFSteps { kCFStepAll = 0, kCFStepTriggered, kCFStepVertex, kCFStepMatchedB, kCFStepMatchedAny, kCFStepRecoB };
+  static const Int_t fgkCFSteps = 9;
+  enum CFSteps { kCFStepAll = 0, kCFStepTriggered, kCFStepVertex, kCFStepMatchedB, kCFStepMatchedAny, kCFStepRecoB, kCFStepMatchedC, kCFStepMatchedLight, kCFStepMatchedGluon };
 
   // Variables relevant for corrections
   static const Int_t fgkCFVars = 4;
@@ -80,7 +80,10 @@ class AliHFJetsContainer : public TNamed
   TH2D *Project2D(CFSteps step, const char* varname1, const char* varname2);
 
   // Get efficiency
-  TH1D *GetEfficiencyPt();
+  TH1D *GetBEfficiencyPt(const char* method);
+  TH1D *GetCEfficiencyPt(const char* method);
+  TH1D *GetLightEfficiencyPt(const char* method);
+  TH1D *GetGluonEfficiencyPt(const char* method);
   TH1D *GetEfficiencyEta();
   TH2D *GetEfficiency2D();
   
@@ -93,6 +96,7 @@ class AliHFJetsContainer : public TNamed
   virtual void FillStep(CFSteps step=kCFStepAll,const TArrayD *point=0x0);
 
  protected:
+  TH1D *GetEfficiencyPt(const char* method, Int_t flavour);
   // for custom container
   TList *fCustomVarNames;        // names of custom variables
   // for standard container
