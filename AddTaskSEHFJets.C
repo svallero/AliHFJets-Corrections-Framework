@@ -36,7 +36,7 @@ AliAnalysisTaskSEHFJets* AddTaskSEHFJets(TString fileout="standard",Bool_t corre
   //Set the jets branch
   // radius is hardcoded here, should be changed TODO
   hfTask->SetRecoJetsBranch("JetClusterAOD_ANTIKT03_B0_Filter00272_Cut00150_Skip00");
-  hfTask->SetMcJetsBranch("JetClusterAODMC2_ANTIKT03_B0_Filter00272_Cut00150_Skip00");
+  hfTask->SetMcJetsBranch("JetClusterAODMC2_ANTIKT03_B0_Filter00272_Cut00150_Skip00"); // full eta
 
   // Define the tagger
   AliHFJetsTaggingVertex *tagger=new AliHFJetsTaggingVertex();

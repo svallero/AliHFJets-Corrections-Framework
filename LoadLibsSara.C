@@ -2,7 +2,8 @@ void LoadLibsSara()
 {
 
   // Load configuration
-  gROOT->LoadMacro("TestConfiguration.C");
+  gROOT->LoadMacro("ConfigurationVAF.C");
+
 
   // Set paths
   gSystem->SetIncludePath(includepath.Data()); 
@@ -35,7 +36,8 @@ void LoadLibsSara()
   arr = sources.Tokenize(" ");
   TIter next(arr);
   while ((objstr=(TObjString*)next())){
-    TString str=(objstr->GetString()).Append(".cxx++g");
+    //TString str=(objstr->GetString()).Append(".cxx++g");
+    TString str=(objstr->GetString()).Append(".cxx+");
     gROOT->LoadMacro(str.Data());
   }
 

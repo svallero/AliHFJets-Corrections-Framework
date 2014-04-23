@@ -325,13 +325,13 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
     //Printf(MAG"Partonnat %f flag %d"B, partonnatMC[0], mcBJets.At(count));
     // Fill container tagger
     step=AliHFJetsContainer::kCFStepAll;
-    fhBJets->FillStepBJets(step,multMC,jetMC,0,partonnatMC,contributionMC,ptpartMC[0]);
+    //fhBJets->FillStepBJets(step,multMC,jetMC,0,partonnatMC,contributionMC,ptpartMC[0]);
     if (flagTriggered) {
       step=AliHFJetsContainer::kCFStepTriggered;
-      fhBJets->FillStepBJets(step,multMC,jetMC,0,partonnatMC,contributionMC,ptpartMC[0]);
+      //fhBJets->FillStepBJets(step,multMC,jetMC,0,partonnatMC,contributionMC,ptpartMC[0]);
       if (flagVertex) {
         step=AliHFJetsContainer::kCFStepVertex;
-        fhBJets->FillStepBJets(step,multMC,jetMC,0,partonnatMC,contributionMC,ptpartMC[0]);
+        //fhBJets->FillStepBJets(step,multMC,jetMC,0,partonnatMC,contributionMC,ptpartMC[0]);
     	fhJets->FillStepJets(step,multMC,jetMC,partonnatMC,contributionMC,ptpartMC);
         }
       }
@@ -441,7 +441,7 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
          Printf(MAG"Fraction jet pT %f"B, fraction);
          // for purity
          step = AliHFJetsContainer::kCFStepMatchedAny;
-         fhBJets->FillStepBJets(step,multMC,matchedJet,nvtx,partonnat,contribution,ptpart[0]);
+         fhJets->FillStepJets(step,multMC,matchedJet,partonnat,contribution,ptpart);
          // efficiency for different flavours
          switch (mcBJets.At(index))
          {
@@ -465,7 +465,7 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
             AliInfo("Matching jet flavour not defined!");
 	    return;
 	    }
-         fhBJets->FillStepBJets(step,multMC,matchedJet,nvtx,partonnat,contribution,ptpart[0]);
+         //fhBJets->FillStepBJets(step,multMC,matchedJet,nvtx,partonnat,contribution,ptpart[0]);
     	 fhJets->FillStepJets(step,multMC,matchedJet,partonnat,contribution,ptpart);
       }
       fbJetArray->Clear();

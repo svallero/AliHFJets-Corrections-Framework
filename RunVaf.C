@@ -1,7 +1,7 @@
 void RunVaf(){
   
   // Local mode is needed to debug and run valgrind
-  const char *mode="local"; // can be "proof" or "local"
+  const char *mode="proof"; // can be "proof" or "local"
   
   // List of AliRoot parameters
   TList *list = new TList();
@@ -22,9 +22,9 @@ void RunVaf(){
   
   // Define dataset
   // just one run
-  TString dataset=("Find;BasePath=/alice/sim/2013/LHC13d18d/126082;FileName=AOD/*/AliAOD.root");
+  //TString dataset=("Find;BasePath=/alice/sim/2013/LHC13d18d/126082;FileName=AOD/*/AliAOD.root");
   // all runs
-  //TString dataset=("Find;BasePath=/alice/sim/2013/LHC13d18d/;FileName=AOD/*/AliAOD.root");
+  TString dataset=("Find;BasePath=/alice/sim/2013/LHC13d18d/;FileName=AOD/*/AliAOD.root");
 
   TChain *chainAOD = 0;
   switch (mode){
@@ -43,7 +43,7 @@ void RunVaf(){
         gROOT->LoadMacro("SetupPar.C");
         setupPar("AliRoot", list);
         // Prepare local input
-        TString makeAODInputChain="MakeAODInputChainSara.C"; 
+        TString makeAODInputChain="MakeAODInputChain.C"; 
         gROOT->LoadMacro(makeAODInputChain.Data());
         chainAOD = CreateChain("List.txt");
 	printf("ENTRIES %d\n",chainAOD->GetEntries());
@@ -79,8 +79,8 @@ void RunVaf(){
   AddTaskBJets(); 
 
   // Start analysis
-  //Int_t nentries=9999999999999;
-  Int_t nentries=10;
+  Int_t nentries=9999999999999;
+  //Int_t nentries=10;
   Int_t firstentry=0;
   if(!mgr->InitAnalysis()) return;
   mgr->PrintStatus();
@@ -96,14 +96,14 @@ void AddTaskJetFinder(){
 
   Int_t kHighPtFilterMask = 272;
   UInt_t iPhysicsSelectionFlag = AliVEvent::kAny;
-  Float_t fTrackEtaWindow = 0.5;
+  Float_t fTrackEtaWindow = 0.9;
   gROOT->LoadMacro("AddTaskJetCluster.C");
   AliAnalysisTaskJetCluster *taskCl = 0;
   taskCl = AddTaskJetCluster("AOD","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.3,0,kTRUE,"",0.15,fTrackEtaWindow);
   // MC charged with full eta window (5)
   taskCl = AddTaskJetCluster("AODMC2","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.3,0,kTRUE,"",0.15,fTrackEtaWindow);
   // MC charged with restricted eta window
-  taskCl = AddTaskJetCluster("AODMC2b","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.3,0,kTRUE,"",0.15,fTrackEtaWindow);
+  //taskCl = AddTaskJetCluster("AODMC2b","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.3,0,kTRUE,"",0.15,fTrackEtaWindow);
 
 }
 

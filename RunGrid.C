@@ -7,13 +7,12 @@ void RunGrid()
   // This macro is to run "local" or "grid"
   // To run with PROOF see RunVaf.C
 
-  //TString mode = "grid";
-  TString mode = "local";
+  TString mode = "grid";
+  //TString mode = "local";
 
   // Load configuration
-  gROOT->LoadMacro("Configuration.C");
-  //gROOT->LoadMacro("ConfigurationOrig.C");
-  //gROOT->LoadMacro("ConfigurationVAF.C");
+  //gROOT->LoadMacro("Configuration.C");
+  gROOT->LoadMacro("ConfigurationVAF.C");
 
   // Set paths
   gSystem->SetIncludePath(includepath.Data()); 
@@ -58,7 +57,7 @@ void RunGrid()
   // Prepare local input (if "local")
   TChain *chainAOD = 0;
   if (mode == "local"){
-     TString makeAODInputChain="MakeAODInputChainSara.C"; 
+     TString makeAODInputChain="MakeAODInputChain.C"; 
      gROOT->LoadMacro(makeAODInputChain.Data());
      // with this it reads ./AliAOD.root and ./AliAOD.Jets.root
      chainAOD = CreateChain("List.txt");

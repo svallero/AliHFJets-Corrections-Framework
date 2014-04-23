@@ -4,7 +4,7 @@ TString loadMacroPath="$ALICE_ROOT/PWGHF/vertexingHF/macros/";
 
 // GRID ---------------------------
 TString user="svallero";
-TString pluginmode="full";
+TString pluginmode="test";
 TString name="AnalysisBjets";
 // packages
 TString api="V1.1x";
@@ -16,8 +16,8 @@ TString fastjet="fastjet::v2.4.2";
 // data
 TString datadir="/alice/sim/2013/LHC13d18d";
 TString datapattern="AOD/*AliAOD.root";
-//TString runs="126082";
-TString runs="126081 126082 126088 126090 126097 126158 126160 126167 126168 126283 126284 126350 126351 126352 126359 126404 126406 126407 126408 126409 126422126424 126425 126432 126437";
+TString runs="126082";
+//TString runs="126081 126082 126088 126090 126097 126158 126160 126167 126168 126283 126284 126350 126351 126352 126359 126404 126406 126407 126408 126409 126422126424 126425 126432 126437";
 //TString datadir="/alice/sim/LHC10f7a";
 //TString datapattern="AOD100/*AliAOD.root";
 //TString runs="130848";
@@ -47,11 +47,11 @@ void AddTasks(){
 
   gROOT->LoadMacro("AddTaskJetCluster.C");
   AliAnalysisTaskJetCluster *taskCl = 0;
-  taskCl = AddTaskJetCluster("AOD","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.4,0,kTRUE,"",0.15,fTrackEtaWindow);
+  taskCl = AddTaskJetCluster("AOD","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.3,0,kTRUE,"",0.15,fTrackEtaWindow);
   // MC charged with full eta window (5)
-  taskCl = AddTaskJetCluster("AODMC2","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.4,0,kTRUE,"",0.15,fTrackEtaWindow);
+  taskCl = AddTaskJetCluster("AODMC2","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.3,0,kTRUE,"",0.15,fTrackEtaWindow);
   // MC charged with restricted eta window
-  taskCl = AddTaskJetCluster("AODMC2b","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.4,0,kTRUE,"",0.15,fTrackEtaWindow);
+  //taskCl = AddTaskJetCluster("AODMC2b","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.4,0,kTRUE,"",0.15,fTrackEtaWindow);
 
   // BTagging 
   gROOT->LoadMacro("AddTaskSEHFJets.C");
