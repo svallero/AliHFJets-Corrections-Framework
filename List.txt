@@ -1,1 +1,1 @@
-AliAOD.root
+../data/AliAOD.root
