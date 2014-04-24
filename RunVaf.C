@@ -1,6 +1,7 @@
 void RunVaf(){
   
   // Local mode is needed to debug and run valgrind
+  //const char *mode="local"; // can be "proof" or "local"
   const char *mode="proof"; // can be "proof" or "local"
   
   // List of AliRoot parameters
@@ -24,7 +25,7 @@ void RunVaf(){
   // just one run
   //TString dataset=("Find;BasePath=/alice/sim/2013/LHC13d18d/126082;FileName=AOD/*/AliAOD.root");
   // all runs
-  TString dataset=("Find;BasePath=/alice/sim/2013/LHC13d18d/;FileName=AOD/*/AliAOD.root");
+  TString dataset=("Find;BasePath=/alice/sim/2013/LHC13d18d_plus/;FileName=AOD/*/AliAOD.root");
 
   TChain *chainAOD = 0;
   switch (mode){
@@ -80,7 +81,7 @@ void RunVaf(){
 
   // Start analysis
   Int_t nentries=9999999999999;
-  //Int_t nentries=10;
+  //Int_t nentries=100;
   Int_t firstentry=0;
   if(!mgr->InitAnalysis()) return;
   mgr->PrintStatus();

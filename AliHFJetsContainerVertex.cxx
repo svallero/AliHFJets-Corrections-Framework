@@ -447,101 +447,103 @@ void AliHFJetsContainerVertex::FillStepJetVtx(AliHFJetsContainer::CFSteps step, 
     AliError(Form(RED"This method is available only for container type kJetVtx: you are trying to fill %s!"B, strContType(fType)));
   }
   
-    Double_t xyz[3],vtxVect[3],jetP[3];
-    Double_t xyzPrim[3];
-    //Double_t cosTheta;
-
-    primVtx->GetXYZ(xyzPrim);
-    jet->PxPyPz(jetP);
-
-    Int_t *indexLxy=new Int_t[nvtx];
     Double_t point[24]={mult*1.,jet->Pt(),jet->Eta(),jet->Phi(),nvtx*1.,0.,-1.,-1.,-1.,-1.,-1.,-1.,-1,-1,-1,-1,-1,-1,-1,-1,-1,p[0],p[1],p[2]};
 
-     Double_t *decLengthXY=new Double_t[nvtx];
-     Double_t *invMasses=new Double_t[nvtx];
-     Double_t *nRealVtx=new Double_t[nvtx];
-     Double_t *nFromBVtx=new Double_t[nvtx];
-     Double_t *nFromPromptDVtx=new Double_t[nvtx];
-     Double_t xMC,yMC;
-     //Double_t vtxP[3],vtxPt,signLxy;
-     Double_t vtxP[3],signLxy;
-     Int_t nvtxMC=0;
+    if (vertices && primVtx){ 
+       Double_t xyz[3],vtxVect[3],jetP[3];
+       Double_t xyzPrim[3];
+       //Double_t cosTheta;
 
-     for(Int_t jj=0;jj<nvtx;jj++){
-       xMC=-99999.;
-       yMC=-99999.;
-       AliAODVertex *vtx=(AliAODVertex*)vertices->UncheckedAt(jj);
-       invMasses[jj]=fTagger->GetVertexInvariantMass(vtx);
-       nRealVtx[jj]=-1;
-       nFromBVtx[jj]=-1;
+       primVtx->GetXYZ(xyzPrim);
+       jet->PxPyPz(jetP);
 
-       vtx->GetXYZ(xyz);
-       vtxVect[0]=xyz[0]-xyzPrim[0];
-       vtxVect[1]=xyz[1]-xyzPrim[1];
-       vtxVect[2]=xyz[2]-xyzPrim[2];
-       signLxy=vtxVect[0]*jetP[0]+vtxVect[1]*jetP[1];
+       Int_t *indexLxy=new Int_t[nvtx];
+       Double_t *decLengthXY=new Double_t[nvtx];
+       Double_t *invMasses=new Double_t[nvtx];
+       Double_t *nRealVtx=new Double_t[nvtx];
+       Double_t *nFromBVtx=new Double_t[nvtx];
+       Double_t *nFromPromptDVtx=new Double_t[nvtx];
+       Double_t xMC,yMC;
+       //Double_t vtxP[3],vtxPt,signLxy;
+       Double_t vtxP[3],signLxy;
+       Int_t nvtxMC=0;
 
-       //Double_t absJetPt=TMath::Sqrt(jetP[0]*jetP[0]+jetP[1]*jetP[1]);
-       //Double_t absVtxVect=TMath::Sqrt(vtxVect[0]*vtxVect[0]+vtxVect[1]*vtxVect[1]);
-       //cosTheta=signLxy/(absJetPt*absVtxVect);//angle between jet and Lxy
+       for(Int_t jj=0;jj<nvtx;jj++){
+         xMC=-99999.;
+         yMC=-99999.;
+         AliAODVertex *vtx=(AliAODVertex*)vertices->UncheckedAt(jj);
+         invMasses[jj]=fTagger->GetVertexInvariantMass(vtx);
+         nRealVtx[jj]=-1;
+         nFromBVtx[jj]=-1;
 
-       decLengthXY[jj]=TMath::Sqrt((xyz[0]-xyzPrim[0])*(xyz[0]-xyzPrim[0])+(xyz[1]-xyzPrim[1])*(xyz[1]-xyzPrim[1]));
-       if(signLxy<0.){
-         decLengthXY[jj]*=-1.;
-       }
-        
-       fTagger->GetVtxPxy(vtx,vtxP);
-       //vtxPt=TMath::Sqrt(vtxP[0]*vtxP[0]+vtxP[1]*vtxP[1]);
-       
-       if(mcPart){
-         Int_t nfromBandD=0,nfromD=0,nfromPromptD=0;
-         fTagger->GetNTracksFromCommonVertex(vtx,mcPart,nvtxMC,xMC,yMC,nfromBandD,nfromD,nfromPromptD);
+         vtx->GetXYZ(xyz);
+         vtxVect[0]=xyz[0]-xyzPrim[0];
+         vtxVect[1]=xyz[1]-xyzPrim[1];
+         vtxVect[2]=xyz[2]-xyzPrim[2];
+         signLxy=vtxVect[0]*jetP[0]+vtxVect[1]*jetP[1];
 
-         nRealVtx[jj]=nvtxMC;
-         nFromBVtx[jj]=nfromBandD;
-         nFromPromptDVtx[jj]=nfromPromptD;
-         //if(decLengthXY[jj]>0.2){
-         //  }
+         //Double_t absJetPt=TMath::Sqrt(jetP[0]*jetP[0]+jetP[1]*jetP[1]);
+         //Double_t absVtxVect=TMath::Sqrt(vtxVect[0]*vtxVect[0]+vtxVect[1]*vtxVect[1]);
+         //cosTheta=signLxy/(absJetPt*absVtxVect);//angle between jet and Lxy
+
+         decLengthXY[jj]=TMath::Sqrt((xyz[0]-xyzPrim[0])*(xyz[0]-xyzPrim[0])+(xyz[1]-xyzPrim[1])*(xyz[1]-xyzPrim[1]));
+         if(signLxy<0.){
+           decLengthXY[jj]*=-1.;
          }
         
-       }
+         fTagger->GetVtxPxy(vtx,vtxP);
+         //vtxPt=TMath::Sqrt(vtxP[0]*vtxP[0]+vtxP[1]*vtxP[1]);
+       
+         if(mcPart){
+           Int_t nfromBandD=0,nfromD=0,nfromPromptD=0;
+           fTagger->GetNTracksFromCommonVertex(vtx,mcPart,nvtxMC,xMC,yMC,nfromBandD,nfromD,nfromPromptD);
+
+           nRealVtx[jj]=nvtxMC;
+           nFromBVtx[jj]=nfromBandD;
+           nFromPromptDVtx[jj]=nfromPromptD;
+           //if(decLengthXY[jj]>0.2){
+           //  }
+           }
+        
+         }
           
-     TMath::Sort(nvtx,decLengthXY,indexLxy);
-     if(nvtx>0){
-       point[6]=decLengthXY[indexLxy[0]];
-       point[9]=invMasses[indexLxy[0]];
-       point[12]=nRealVtx[indexLxy[0]];
-       point[15]=nFromBVtx[indexLxy[0]];
-       point[18]=nFromPromptDVtx[indexLxy[0]];
-       }
+       TMath::Sort(nvtx,decLengthXY,indexLxy);
+       if(nvtx>0){
+         point[6]=decLengthXY[indexLxy[0]];
+         point[9]=invMasses[indexLxy[0]];
+         point[12]=nRealVtx[indexLxy[0]];
+         point[15]=nFromBVtx[indexLxy[0]];
+         point[18]=nFromPromptDVtx[indexLxy[0]];
+         }
 
-     if(nvtx>1){
-       point[7]=decLengthXY[indexLxy[1]];
-       point[10]=invMasses[indexLxy[1]];
-       point[13]=nRealVtx[indexLxy[1]];
-       point[16]=nFromBVtx[indexLxy[1]];
-       point[19]=nFromPromptDVtx[indexLxy[1]];
-       }
+       if(nvtx>1){
+         point[7]=decLengthXY[indexLxy[1]];
+         point[10]=invMasses[indexLxy[1]];
+         point[13]=nRealVtx[indexLxy[1]];
+         point[16]=nFromBVtx[indexLxy[1]];
+         point[19]=nFromPromptDVtx[indexLxy[1]];
+         }
 
-     if(nvtx>2){
-       point[8]=decLengthXY[indexLxy[2]];
-       point[11]=invMasses[indexLxy[2]];
-       point[14]=nRealVtx[indexLxy[2]];
-       point[17]=nFromBVtx[indexLxy[2]];
-       point[20]=nFromPromptDVtx[indexLxy[2]];
-       }
+       if(nvtx>2){
+         point[8]=decLengthXY[indexLxy[2]];
+         point[11]=invMasses[indexLxy[2]];
+         point[14]=nRealVtx[indexLxy[2]];
+         point[17]=nFromBVtx[indexLxy[2]];
+         point[20]=nFromPromptDVtx[indexLxy[2]];
+         }
 
-     // Calculate sum of inv masses of the 3 more displaced vertices
-     for(Int_t ivtx=0;ivtx<3;ivtx++){
-       if(nvtx>ivtx) point[5]+=invMasses[indexLxy[ivtx]];
-       }
+       // Calculate sum of inv masses of the 3 more displaced vertices
+       for(Int_t ivtx=0;ivtx<3;ivtx++){
+         if(nvtx>ivtx) point[5]+=invMasses[indexLxy[ivtx]];
+         }
+     delete indexLxy;
+     delete decLengthXY;
+     delete invMasses;
+     } // end if (vertices && primVtx) 
 
      TArrayD *apoint=new TArrayD(24,point);
      AliHFJetsContainer::FillStep(step, apoint);
 
-     delete indexLxy;
-     delete decLengthXY;
-     delete invMasses;
 
      return;
 }

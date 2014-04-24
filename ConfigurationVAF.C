@@ -3,8 +3,10 @@ Long64_t nentries=123567890,firstentry=0;
 TString loadMacroPath="$ALICE_ROOT/PWGHF/vertexingHF/macros/";
 
 // GRID ---------------------------
+TString dataset="LHC13d18e_plus";
 TString user="svallero";
-TString pluginmode="full";
+TString pluginmode="terminate";
+//TString name=Form("AnalysisBjets_%s", dataset.Data());
 TString name="AnalysisBjets";
 // packages
 TString api="V1.1x";
@@ -14,7 +16,8 @@ TString boost="boost::v1_43_0";
 TString cgal="cgal::v3.6";
 TString fastjet="fastjet::v2.4.2";
 // data
-TString datadir="/alice/sim/2013/LHC13d18d";
+//TString datadir="/alice/sim/2013/LHC13d18d";
+TString datadir=Form("/alice/sim/2013/%s",dataset.Data());
 TString datapattern="AOD/*AliAOD.root";
 //TString runs="126082";
 TString runs="126081 126082 126088 126090 126097 126158 126160 126167 126168 126283 126284 126350 126351 126352 126359 126404 126406 126407 126408 126409 126422 126424 126425 126432 126437";
