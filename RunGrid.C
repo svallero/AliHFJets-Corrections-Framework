@@ -7,8 +7,8 @@ void RunGrid()
   // This macro is to run "local" or "grid"
   // To run with PROOF see RunVaf.C
 
-  //TString mode = "grid";
-  TString mode = "local";
+  TString mode = "grid";
+  //TString mode = "local";
 
   // Load configuration
   //gROOT->LoadMacro("Configuration.C");
@@ -123,13 +123,13 @@ AliAnalysisGrid* CreateAlienHandler(){
   gROOT->LoadMacro(Form("%s/AddGoodRuns.C",reducedpath.Data()));
   plugin->SetGridDataDir(datadir.Data());
   plugin->SetDataPattern(datapattern.Data()); // specify AOD set
-  //TObjArray *arr;
-  //TObjString *objstr;
-  //arr = runs.Tokenize(" ");
-  //TIter next(arr);
-  //while ((objstr=(TObjString*)next())){
-  //  plugin->AddRunNumber((objstr->GetString()).Data());  
-  //}
+  TObjArray *arr;
+  TObjString *objstr;
+  arr = runs.Tokenize(" ");
+  TIter next(arr);
+  while ((objstr=(TObjString*)next())){
+    plugin->AddRunNumber((objstr->GetString()).Data());  
+  }
 
   // Analysis sources
   TString allsources=" ";
