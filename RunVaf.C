@@ -25,7 +25,7 @@ void RunVaf(){
   // just one run
   //TString dataset=("Find;BasePath=/alice/sim/2013/LHC13d18d/126082;FileName=AOD/*/AliAOD.root");
   // all runs
-  TString dataset=("Find;BasePath=/alice/sim/2013/LHC13d18d_plus/;FileName=AOD/*/AliAOD.root");
+  TString dataset=("Find;BasePath=/alice/sim/2013/LHC13d18d/;FileName=AOD/*/AliAOD.root");
 
   TChain *chainAOD = 0;
   switch (mode){
@@ -66,6 +66,7 @@ void RunVaf(){
   
   // Load analysis sources
   TString sources=("AliRDHFJetsCuts AliRDHFJetsCutsVertex AliHFJetsTagging AliHFJetsTaggingVertex AliHFJetsContainer AliHFJetsContainerVertex AliAnalysisTaskSEHFJets"); 
+  //TString sources=("AliRDHFJetsCuts AliRDHFJetsCutsVertex AliHFJetTagging AliHFJetVertexTagging AliAnalysisTaskSEHFJetsOrig");
   arr = sources.Tokenize(" ");
   TIter next(arr);
   while ((objstr=(TObjString*)next())){
@@ -96,13 +97,14 @@ void RunVaf(){
 void AddTaskJetFinder(){
 
   Int_t kHighPtFilterMask = 272;
+  //Int_t kHighPtFilterMask = 768;
   UInt_t iPhysicsSelectionFlag = AliVEvent::kAny;
   Float_t fTrackEtaWindow = 0.9;
   gROOT->LoadMacro("AddTaskJetCluster.C");
   AliAnalysisTaskJetCluster *taskCl = 0;
-  taskCl = AddTaskJetCluster("AOD","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.3,0,kTRUE,"",0.15,fTrackEtaWindow);
+  taskCl = AddTaskJetCluster("AOD","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.4,0,kTRUE,"",0.15,fTrackEtaWindow);
   // MC charged with full eta window (5)
-  taskCl = AddTaskJetCluster("AODMC2","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.3,0,kTRUE,"",0.15,fTrackEtaWindow);
+  taskCl = AddTaskJetCluster("AODMC2","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.4,0,kTRUE,"",0.15,fTrackEtaWindow);
   // MC charged with restricted eta window
   //taskCl = AddTaskJetCluster("AODMC2b","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.3,0,kTRUE,"",0.15,fTrackEtaWindow);
 
@@ -112,7 +114,10 @@ void AddTaskJetFinder(){
 void AddTaskBJets(){
 
   gROOT->LoadMacro("AddTaskSEHFJets.C");
+  //gROOT->LoadMacro("AddTaskSEHFJetsOrig.C");
   AliAnalysisTaskSEHFJets* taskJet=AddTaskSEHFJets("standard",2,"","c",1000);
+  //AliAnalysisTaskSEHFJets* taskJet=AddTaskSEHFJets("standard",2,"","c",0);
+  //AliAnalysisTaskSEHFJetsOrig* taskJet=AddTaskSEHFJetsOrig("standard",2,"","c",1000);
   // Do not cut on max centrality
   //AliAnalysisTaskSEHFJets* taskJet=AddTaskSEHFJets("standard",2,"","c",0, 1000);
 

@@ -301,10 +301,10 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
       continue;
       }
  
+    // For jet matching, consider only MC jets within required eta and pT range
     // this cut does nothing because eta selectoion is already in fCutsHFjets
     //if (TMath::Abs(jetMC->Eta()) > 0.5) continue;
 
-    // For jet matching, consider only MC jets within required eta and pT range
     
     // Asking for at least 2 tracks in the jet
     //TRefArray* reftracksMC=(TRefArray*)jetMC->GetRefTracks();
@@ -404,11 +404,11 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
     // Run b-tagger
     nvtx=fTagger->FindVertices(jet,aod,v1,magzkG,fbJetArray,arrDispersion);
     //printf(" %d vertices, %d array size\n",nvtx,fbJetArray->GetEntries());
-    if(nvtx>0){
-    //if(1){ //*** TMP BY SV!!! ***
+    //if(nvtx>0){
+    if(1){ //*** NEW BY SV!!! ***
       count++;
-      Printf(MAG"At least 1 vertex found!!!"B);
-      Printf(RED"RECO method 2: %f position: %d"B, partonnat[meth], count);
+      //Printf(MAG"At least 1 vertex found!!!"B);
+      Printf(RED"RECO method 1: %f position: %d"B, partonnat[meth], count);
       // QA vertici prima di selezione  --> selezione gia` fatta in FindVertices
       fhQaVtx->FillStepQaVtx(step,multMC,jet,fbJetArray,arrDispersion,nvtx,vtx1,arrayMC,partonnat);
       // Fill container vertices
@@ -466,7 +466,7 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
             Printf(MAG"Matcehd to B-jet!!!"B);
 	    break;
          default: // 0 is not defined, should never be the case...
-            AliInfo("Matching jet flavour not defined!");
+            AliInfo(RED"Matching jet flavour not defined!"B);
 	    return;
 	    }
          //fhBJets->FillStepBJets(step,multMC,matchedJet,nvtx,partonnat,contribution,ptpart[0]);
@@ -526,10 +526,11 @@ void AliAnalysisTaskSEHFJets::GetFlavour3Methods(AliAODJet *jet, Double_t (&part
       parton[0]=fTagger->IsMCJet(fArrayMC,jet,contribution); // method 1
       parton[1]=(AliAODMCParticle*)fTagger->IsMCJetParton(fArrayMC,jet); // method 2
       parton[2]=(AliAODMCParticle*)fTagger->IsMCJetMeson(fArrayMC,jet); // method 3
-
+      
       if(parton[0]){
         Int_t pdg=TMath::Abs(parton[0]->PdgCode());
-        if(pdg==4 || pdg==5) AliInfo(Form(cy"track method -> pdg parton: %d, contribution =%f"B,pdg,contribution));
+        //if(pdg==4 || pdg==5) 
+          AliInfo(Form(cy"track method -> pdg parton: %d, contribution =%f"B,pdg,contribution));
         if(pdg==21)partonnat[0]=1;
         else if(pdg<4)partonnat[0]=2;
         else if(pdg==4)partonnat[0]=3;
@@ -539,7 +540,8 @@ void AliAnalysisTaskSEHFJets::GetFlavour3Methods(AliAODJet *jet, Double_t (&part
 
       if(parton[1]!=0){
         Int_t pdg=TMath::Abs(parton[1]->PdgCode());
-        if(pdg==4 || pdg==5) AliInfo(Form(cy"parton method -> pdg parton: %d"B,pdg));
+        //if(pdg==4 || pdg==5) 
+          AliInfo(Form(cy"parton method -> pdg parton: %d"B,pdg));
         if(pdg==21)partonnat[1]=1;
         else if(pdg<4)partonnat[1]=2;
         else if(pdg==4)partonnat[1]=3;
@@ -549,14 +551,16 @@ void AliAnalysisTaskSEHFJets::GetFlavour3Methods(AliAODJet *jet, Double_t (&part
 
       if(parton[2]!=0){
         Int_t pdg=TMath::Abs(parton[2]->PdgCode());
-        if((pdg>=400 && pdg<=600) || (pdg>=4000 && pdg<=6000)) AliInfo(Form(cy"meson method -> pdg parton: %d"B,pdg));
+        //if((pdg>=400 && pdg<=600) || (pdg>=4000 && pdg<=6000))
+          AliInfo(Form(cy"meson method -> pdg parton: %d"B,pdg));
         if((pdg>=400 && pdg<=500) || (pdg>=4000 && pdg<=5000))partonnat[2]=3;
         else{
           if((pdg>=500 && pdg<=600) || (pdg>=5000 && pdg<=6000))partonnat[2]=4;
-          else partonnat[2]=2;
+          //else partonnat[2]=2;
         }
-        ptpart[2]=parton[2]->Pt();
+      ptpart[2]=parton[2]->Pt();
       }
+      else partonnat[2]=2;
 
 }
 

@@ -35,8 +35,8 @@ AliAnalysisTaskSEHFJets* AddTaskSEHFJets(TString fileout="standard",Bool_t corre
 
   //Set the jets branch
   // radius is hardcoded here, should be changed TODO
-  hfTask->SetRecoJetsBranch("JetClusterAOD_ANTIKT03_B0_Filter00272_Cut00150_Skip00");
-  hfTask->SetMcJetsBranch("JetClusterAODMC2_ANTIKT03_B0_Filter00272_Cut00150_Skip00"); // full eta
+  hfTask->SetRecoJetsBranch("JetClusterAOD_ANTIKT04_B0_Filter00272_Cut00150_Skip00");
+  hfTask->SetMcJetsBranch("JetClusterAODMC2_ANTIKT04_B0_Filter00272_Cut00150_Skip00"); // full eta
 
   // Define the tagger
   AliHFJetsTaggingVertex *tagger=new AliHFJetsTaggingVertex();
@@ -86,7 +86,7 @@ void DefineCutsTask(AliAnalysisTaskSEHFJets *task, Float_t minC, Float_t maxC){
     // jets
     cuts->SetJetRadius(0.4); // this cut does nothing
     cuts->SetMaxEtaJet(0.5);//0.9-R
-    cuts->SetMinPtJet(5);
+    cuts->SetMinPtJet(10);
     cuts->SetMaxPtJet(200);
     // Set centrality 
     cuts->SetMinCentrality(minC);
@@ -107,7 +107,7 @@ void DefineCutsTagger(AliHFJetsTaggingVertex *tg){
     // jets
     cuts2->SetJetRadius(0.4);
     cuts2->SetMaxEtaJet(0.5);//0.9-R
-    cuts2->SetMinPtJet(5);
+    cuts2->SetMinPtJet(10);
     cuts2->SetMaxPtJet(200);
     // tracks
     AliESDtrackCuts *esdTrackCuts = new AliESDtrackCuts("AliESDtrackCuts","default");
@@ -128,7 +128,7 @@ void DefineCutsTagger(AliHFJetsTaggingVertex *tg){
     cuts2->SetNprongs(3);
     cuts2->SetIsElec(kFALSE); // kTRUE to select e in jet vertex  
 
-    cuts2->SetMinPtHardestTrack(0.3);//default 0.3
+    cuts2->SetMinPtHardestTrack(1.0);//default 0.3
     cuts2->SetSecVtxWithKF(kFALSE);//default with StrLinMinDist
     cuts2->SetImpParCut(0.);//default 0
     cuts2->SetDistPrimSec(0.);//default 0

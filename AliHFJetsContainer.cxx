@@ -287,15 +287,23 @@ void AliHFJetsContainer::SetAxisRangeStep(const char* axisname, Double_t min, Do
 	AliInfo(Form(MAG"Setting range for axis: \"%s\" step: \"%s\""B, axisname, GetStepName(step)));
 	Int_t axis = GetVarAxis(axisname); 
 	//AliInfo(Form("Resetting axis %d", axis));
+        Int_t startbin= fContainer->GetAxis(axis, step)->FindBin(min);
+        Int_t stopbin= fContainer->GetAxis(axis, step)->FindBin(max);
+        Int_t lastbin= fContainer->GetAxis(axis, step)->GetLast();
+	//AliInfo(Form(RED"startbin: %d stopbin: %d lastbin: %d"B, startbin, stopbin, lastbin));
+        //if (stopbin < startbin || !stopbin){
+        if (max < min || !stopbin){
+		AliInfo("Invalid axis range! Setting maximum to last bin!");
+ 		stopbin= lastbin;
+        } 
         if (!overflow){ 
-	   fContainer->GetAxis(axis, step)->SetRangeUser(min,max);
+	   //fContainer->GetAxis(axis, step)->SetRangeUser(min,max);
+	   fContainer->GetAxis(axis, step)->SetRange(startbin,stopbin);
         } else {
-           Int_t startbin= fContainer->GetAxis(axis, step)->FindBin(min);
-           Int_t stopbin= fContainer->GetAxis(axis, step)->FindBin(max);
-           Int_t lastbin= fContainer->GetAxis(axis, step)->GetLast();
            if (stopbin != lastbin) {
-             AliError(RED"You requested to include overflow, but your max bin is not the last!!!"B);
-             return;
+             AliError(RED"You requested overflow, but your max bin is not the last!!! I'm setting it to last bin!"B);
+             stopbin = lastbin;
+             //return;
              }
            Double_t ofw=fContainer->GetOverFlows(axis,step);
            Printf("OVERFLOW: %f", ofw);
@@ -530,8 +538,8 @@ TH1* AliHFJetsContainer::StepsRatio(CFSteps num, CFSteps denom, Int_t var1, Int_
 		hnum=fContainer->Project(num, var1);
 		hdenom=fContainer->Project(denom, var1);
 	}
-	//hnum->Divide(hnum, hdenom, 1, 1, "B"); // capire opzione "B"
-	hnum->Divide(hnum, hdenom);
+	hnum->Divide(hnum, hdenom, 1, 1, "B"); // "B" means binomial error
+	//hnum->Divide(hnum, hdenom);
 	delete hdenom;
 	return hnum;
 }
@@ -560,11 +568,23 @@ TH1D* AliHFJetsContainer::GetGluonEfficiencyPt(const char* method)
    return h;
 }
 
+TH1D* AliHFJetsContainer::GetMatchingEfficiencyPt(const char* method)
+{
+   TH1D *h = (TH1D*)GetEfficiencyPt(method, 0);
+   return h;
+}
+
 TH1D* AliHFJetsContainer::GetEfficiencyPt(const char* method, Int_t flavour)
 {
         // Determine step "matched" according to chosen flavour
         CFSteps step_matched;
+        Float_t fmin= flavour*1.;
+        Float_t fmax = flavour*1.;
         switch (flavour){
+          case 0:
+	    step_matched = kCFStepMatchedAny;
+            fmin=0; fmax=4;
+	    break;
 	  case 1:
 	    step_matched = kCFStepMatchedGluon;
             break;
@@ -581,13 +601,13 @@ TH1D* AliHFJetsContainer::GetEfficiencyPt(const char* method, Int_t flavour)
             AliError(RED"Wrong flavour!"B);
             break;
         } 
- 
+         
         // restric flavour of MC jet (denominator)
         ResetAxisStep(method, kCFStepVertex);
-        SetAxisRangeStep(method,flavour-0.5,flavour+0.5, kCFStepVertex);
+        SetAxisRangeStep(method,fmin,fmax, kCFStepVertex);
         // restric flavour of RECO jet (numerator)
         ResetAxisStep(method, step_matched);
-        SetAxisRangeStep(method,flavour-0.5,flavour+0.5, step_matched);
+        SetAxisRangeStep(method,fmin,fmax, step_matched);
 	TH1 *h = StepsRatio(step_matched, kCFStepVertex, kCFJetPt);
 	h->SetTitle(Form("%s/kCFStepVertex",GetStepName(step_matched)));
 	return dynamic_cast<TH1D*>(h);

@@ -115,8 +115,8 @@ void SetStyle(){
 	gPad->SetBorderSize(2);
 	//gPad->SetGridy();
 	gStyle->SetOptTitle(0);
-	//gStyle->SetOptStat(111111);
-	gStyle->SetOptStat(0);
+	gStyle->SetOptStat(111111);
+	//gStyle->SetOptStat(0);
 	gStyle->SetPalette(1);
 	gStyle->SetTitleBorderSize(0);
 	gStyle->SetTitleFillColor(0);

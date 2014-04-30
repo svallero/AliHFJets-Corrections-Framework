@@ -80,6 +80,7 @@ class AliHFJetsContainer : public TNamed
   TH2D *Project2D(CFSteps step, const char* varname1, const char* varname2);
 
   // Get efficiency
+  TH1D *GetMatchingEfficiencyPt(const char* method);
   TH1D *GetBEfficiencyPt(const char* method);
   TH1D *GetCEfficiencyPt(const char* method);
   TH1D *GetLightEfficiencyPt(const char* method);

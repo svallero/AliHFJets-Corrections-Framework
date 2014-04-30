@@ -259,8 +259,8 @@ void AliHFJetsContainerVertex::GetBinningVertex(TString var, Int_t& nBins, Doubl
       nBins = 5; binmin= -0.5; binmax= 4.5;
   } else if (var.EqualTo("nRecoVtx")){
       axistitle="N_{vtx,reco}";
-      //nBins = 20; binmin= 0.; binmax= 20.; // changed by SV
-      nBins = 20; binmin= 0.99; binmax= 20.99;  // changed by SV
+      nBins = 21; binmin= -0.5; binmax= 20.5; // changed by SV
+      //nBins = 20; binmin= 0.99; binmax= 20.99;  // changed by SV
   } else if (var.EqualTo("deltaX")){
       axistitle="#Delta x (cm)";
       nBins = 15; binmin= -0.03; binmax= 0.03;

@@ -28,12 +28,13 @@ THnSparseF* fSparsebTaggedJets;
 
 
 Int_t rebin=1;
-void firstSparseEfficiencies(Float_t mass=0.,Int_t partonmethod=2, Float_t pt=10. ){
+void firstSparseEfficiencies(Float_t mass=2.,Int_t partonmethod=1, Float_t pt=10. ){
   //Float_t mass=0.;
   //Int_t partonmethod=1; --> //0=weights, 1=parton in jet cone, 2=meson in jet cone.
 
   TString outdir="plots_test";
-  TFile* f1=new TFile("AnalysisResultsSup.root");
+  TFile* f1=new TFile("outputs/AnalysisResultsLHC13d18dOldSara.root");
+  //TFile* f1=new TFile("AnalysisResults.root");
 
   TDirectory *dir = (TDirectory*)f1->Get("PWG3_HFCJ_HFjetVertex");
 
@@ -84,8 +85,10 @@ void firstSparseEfficiencies(Float_t mass=0.,Int_t partonmethod=2, Float_t pt=10
 
   TAxis* ax2=(TAxis*)fSparseJetVerticesProp->GetAxis(6); // Mass1 cut
   ax2->SetRangeUser(mass,10.);
+  //TAxis* axdummy=(TAxis*)fSparseJetVerticesProp->GetAxis(1); // nRecoVert cut
+  //axdummy->SetRangeUser(1,20.);
 
-  TH1D* h1=(TH1D*)makeProjection("h1",fSparseJetVerticesProp,axisparton,5,3,0.,1,2,0);
+  TH1D* h1=(TH1D*)makeProjection("h1",fSparseJetVerticesProp,axisparton,5,3,0.,11.0,2,0);
   TH1D* h2=(TH1D*)makeProjection("h2",fSparseJetVerticesProp,axisparton,5,3,0.02,1,2,0);
   TH1D* h3=(TH1D*)makeProjection("h3",fSparseJetVerticesProp,axisparton,5,3,0.04,13,2,0);
   TH1D* h4=(TH1D*)makeProjection("h4",fSparseJetVerticesProp,axisparton,5,3,0.06,6,2,0);
