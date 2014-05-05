@@ -241,7 +241,9 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
   
   AliAODVertex *vtx1;
   // TRIGGER SELECTION
-  if(!fCutsHFjets->IsEventSelected(aod)){ // controllare che sia proprio un "trigger" cut TODO
+  //if(!fCutsHFjets->IsEventSelected(aod)){ // controllare che sia proprio un "trigger" cut TODO
+  // TMP by SV for jet-jet production
+  if(0){ // controllare che sia proprio un "trigger" cut TODO
     AliDebug(AliLog::kDebug,"Event did not pass event selection from AliRDHFJetsCuts!");
   } else {
     flagTriggered=kTRUE;
@@ -281,6 +283,7 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
   AliHFJetsContainer::CFSteps step;
   // Loop on MC jets
   Int_t nMCJets=arrayMCJets->GetEntries();
+  Printf("*** MC JETS: %d ***",nMCJets);
   // also write jets on TList, needed for matching 
   TList *listMCJets=new TList();
   //listMCJets->SetOwner(kTRUE);
@@ -294,6 +297,7 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
   AliAODJet *jetMC;
   for(Int_t jetcand=0;jetcand<nMCJets;jetcand++){
     jetMC=(AliAODJet*)arrayMCJets->UncheckedAt(jetcand);
+    //AliDebug(AliLog::kDebug,Form("JetMC selected: pT=%f, eta=%f!", jetMC->Pt(),jetMC->Eta()));
     if (!jetMC) continue; 
     // restrict jet eta and pT ranges
     if(!fCutsHFjets->IsJetSelected(jetMC)){
@@ -373,6 +377,7 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
 
   // Loop on jets (clusterized on RECO particles)
   Int_t nJets=arrayJets->GetEntries();
+  Printf("*** RECO JETS: %d ***",nJets);
   AliAODJet *jet;
 
   Int_t nvtx=0;
@@ -413,7 +418,7 @@ void AliAnalysisTaskSEHFJets::AnalyseCorrectionsMode(){
       fhQaVtx->FillStepQaVtx(step,multMC,jet,fbJetArray,arrDispersion,nvtx,vtx1,arrayMC,partonnat);
       // Fill container vertices
       fhJetVtx->FillStepJetVtx(step,multMC,jet,fbJetArray,nvtx,vtx1,arrayMC,partonnat);
-      //Printf(RED"*** FILLING STEP %d ***"B, step);
+      Printf(RED"*** FILLING STEP %d ***"B, step);
       // Fill container tagger
       fhBJets->FillStepBJets(step,multMC,jet,nvtx,partonnat,contribution,ptpart[0]);
       // Jet Matching

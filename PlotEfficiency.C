@@ -8,9 +8,9 @@ void PlotEfficiency(){
   gROOT->Macro("LoadLibsSara.C");
 
   // Input file
-  //TFile *f = new TFile("AnalysisResults.root","r");
-  TFile* f2=new TFile("outputsLHC13d18d/AnalysisResults_NEW_TRC0_MM1_FB768.root","r"); // good for matching eff.
-  TFile* f1=new TFile("outputsLHC13d18d/AnalysisResults_NEW_TRC0_MM1_FB272.root","r"); 
+  //TFile *f1 = new TFile("outputsLHC11a1/AnalysisResults_LHC11a1c.root","r");
+  TFile* f2=new TFile("outputsLHC13d18d/AnalysisResults_NEW_TRC0_MM1_FB768_merged.root","r"); // good for matching eff.
+  TFile* f1=new TFile("outputsLHC13d18d/AnalysisResults_NEW_TRC0_MM1_FB272_merged.root","r"); 
   //TFile* f1=new TFile("outputsLHC13d18d/AnalysisResults_NEW_TRC1_MM2_FB768.root","r"); // good for matching eff.
   //TFile* f2=new TFile("outputsLHC13d18d/AnalysisResults_NEW_TRC1_MM2_FB272.root","r"); 
 
@@ -52,29 +52,29 @@ void PlotEfficiency(){
   arr[3]=AliHFJetsContainer::kCFStepMatchedGluon;
   arr[4]=AliHFJetsContainer::kCFStepMatchedAny;
   for(Int_t i=0; i<5; i++){
-     //hfcont->SetAxisRangeStep("Lxy1",lxymin,-1,arr[i], kTRUE);
-     //hfcont->SetAxisRangeStep("mass1",massmin,-1,arr[i], kTRUE);
-     //hfcont->SetAxisRangeStep("nRecoVtx",nvtxmin,-1,arr[i], kTRUE);
+     hfcont->SetAxisRangeStep("Lxy1",lxymin,-1,arr[i], kTRUE);
+     hfcont->SetAxisRangeStep("mass1",massmin,-1,arr[i], kTRUE);
+     hfcont->SetAxisRangeStep("nRecoVtx",nvtxmin,-1,arr[i], kTRUE);
      }
  
 
 
   // Dummy
-  CreateCanvas("Parton nature",kFALSE);
+  //CreateCanvas("Parton nature",kFALSE);
   //TH1D *pnat = (TH1D*)hfcont->Project1D(AliHFJetsContainer::kCFStepRecoB,"kCFJetEta"); 
-  hfcont->SetAxisRangeStep("kCFJetPt",10.,14.,AliHFJetsContainer::kCFStepVertex);
-  hfcont->SetAxisRangeStep("kCFJetPt",10.,14.,AliHFJetsContainer::kCFStepMatchedAny);
-  TH1D *pnatvertex = (TH1D*)hfcont->Project1D(AliHFJetsContainer::kCFStepVertex,meth.Data()); 
-  Color(pnatvertex,1);
-  pnatvertex->Draw();
-  TH1D *pnatany = (TH1D*)hfcont->Project1D(AliHFJetsContainer::kCFStepMatchedAny,meth.Data()); 
-  Color(pnatany,2);
+  //hfcont->SetAxisRangeStep("kCFJetPt",10.,14.,AliHFJetsContainer::kCFStepVertex);
+  //hfcont->SetAxisRangeStep("kCFJetPt",10.,14.,AliHFJetsContainer::kCFStepMatchedAny);
+  //TH1D *pnatvertex = (TH1D*)hfcont->Project1D(AliHFJetsContainer::kCFStepVertex,meth.Data()); 
+  //Color(pnatvertex,1);
+  //pnatvertex->Draw();
+  //TH1D *pnatany = (TH1D*)hfcont->Project1D(AliHFJetsContainer::kCFStepMatchedAny,meth.Data()); 
+  //Color(pnatany,2);
   //pnatany->Draw("same");
   // Legend
-  TLegend *leg0 = NewLegend(Form("Bit 768 - Method %s - Step: ", meth.Data()));
-  leg0->AddEntry(pnatvertex,"Vertex","lpf");
-  leg0->AddEntry(pnatany,"MatchedAny","lpf");
-  leg0->Draw("same");
+  //TLegend *leg0 = NewLegend(Form("Bit 768 - Method %s - Step: ", meth.Data()));
+  //leg0->AddEntry(pnatvertex,"Vertex","lpf");
+  //leg0->AddEntry(pnatany,"MatchedAny","lpf");
+  //leg0->Draw("same");
 
   //pnat->DrawCopy();
 
@@ -88,8 +88,8 @@ void PlotEfficiency(){
   hmatcheffpt2->DrawCopy("same");
   // Legend
   TLegend *leg1 = NewLegend("Filterbit: ");
-  leg1->AddEntry(hmatcheffpt,"768","lpf");
-  leg1->AddEntry(hmatcheffpt2,"272","lpf");
+  leg1->AddEntry(hmatcheffpt,"272","lpf");
+  leg1->AddEntry(hmatcheffpt2,"768","lpf");
   leg1->Draw("same");
   
   // Canvas 
@@ -120,7 +120,7 @@ void PlotEfficiency(){
   Color(hgeffpt,4,20);
   hgeffpt->Rebin(rebin);
   hgeffpt->Scale(1./rebin);
-  //hgeffpt->DrawCopy("same");
+  hgeffpt->DrawCopy("same");
   //hgeffpt->DrawCopy();
   // Get matching efficiency
   TH1D *hmeffpt = (TH1D*)hfcont->GetMatchingEfficiencyPt(meth.Data());
@@ -135,9 +135,9 @@ void PlotEfficiency(){
   TLegend *leg = NewLegend(Form("Method: %s - Jet flavour:",meth.Data()));
   leg->AddEntry(hbeffpt->Clone(),"Beauty","lpf");
   leg->AddEntry(hceffpt,"Charm","lpf");
-  leg->AddEntry(hleffpt,"Light + Gluon","lpf");
-  //leg->AddEntry(hleffpt,"Light","lpf");
-  //leg->AddEntry(hgeffpt,"Gluon","lpf");
+  //leg->AddEntry(hleffpt,"Light + Gluon","lpf");
+  leg->AddEntry(hleffpt,"Light","lpf");
+  leg->AddEntry(hgeffpt,"Gluon","lpf");
   //leg->AddEntry(hmeffpt,"All","l");
   leg->Draw("same");
 

@@ -82,11 +82,11 @@ AliAnalysisTaskJetCluster *AddTaskJetCluster(char* bRec,char* bGen ,UInt_t filte
     AliAnalysisTaskJetCluster* clus = new  AliAnalysisTaskJetCluster(Form("JetCluster%s_%s%s",bRec,jf,cAdd.Data()));
       
    // or a config file
-   // clus->SetAnalysisType(AliAnalysisTaskJetCluster::kAnaMC);
-   // if(iAODanalysis)clus->SetAODInput(kTRUE);
-   // clus->SetDebugLevel(11); 
+    //clus->SetAnalysisType(AliAnalysisTaskJetCluster::kAnaMC);
+   //if(iAODanalysis)clus->SetAODInput(kTRUE);
+   //clus->SetDebugLevel(111); 
    clus->SetFilterMask(filterMask); 
-   //   clus->SetUseGlobalSelection(kTRUE); 
+   //clus->SetUseGlobalSelection(kFALSE); 
    clus->SetVtxCuts(kVertexWindowCl,1);
    if(type == "AOD"){
      // Assume all jet are produced already

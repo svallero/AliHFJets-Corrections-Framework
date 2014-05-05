@@ -352,7 +352,7 @@ void AliHFJetsContainerVertex::FillStepQaVtx(AliHFJetsContainer::CFSteps step, D
     jet->PxPyPz(jetP);
 
     Int_t *indexLxy=new Int_t[nvtx];
-    Double_t pointVtxProp[21]={mult*1.,jet->Pt(),jet->Eta(),jet->Phi(),jet->GetRefTracks()->GetEntriesFast()*1.,0.,0.,0.,0.,p[0],0,0,0,0,0,0,0,0,0,p[1],p[2]};
+    Double_t pointVtxProp[21]={mult*1.,jet->Pt(),jet->Eta(),jet->Phi()-TMath::Pi(),jet->GetRefTracks()->GetEntriesFast()*1.,0.,0.,0.,0.,p[0],0,0,0,0,0,0,0,0,0,p[1],p[2]};
 
      Double_t *decLengthXY=new Double_t[nvtx];
      Double_t *invMasses=new Double_t[nvtx];
@@ -447,7 +447,7 @@ void AliHFJetsContainerVertex::FillStepJetVtx(AliHFJetsContainer::CFSteps step, 
     AliError(Form(RED"This method is available only for container type kJetVtx: you are trying to fill %s!"B, strContType(fType)));
   }
   
-    Double_t point[24]={mult*1.,jet->Pt(),jet->Eta(),jet->Phi(),nvtx*1.,0.,-1.,-1.,-1.,-1.,-1.,-1.,-1,-1,-1,-1,-1,-1,-1,-1,-1,p[0],p[1],p[2]};
+    Double_t point[24]={mult*1.,jet->Pt(),jet->Eta(),jet->Phi()-TMath::Pi(),nvtx*1.,0.,-1.,-1.,-1.,-1.,-1.,-1.,-1,-1,-1,-1,-1,-1,-1,-1,-1,p[0],p[1],p[2]};
 
     if (vertices && primVtx){ 
        Double_t xyz[3],vtxVect[3],jetP[3];
@@ -488,8 +488,11 @@ void AliHFJetsContainerVertex::FillStepJetVtx(AliHFJetsContainer::CFSteps step, 
 
          decLengthXY[jj]=TMath::Sqrt((xyz[0]-xyzPrim[0])*(xyz[0]-xyzPrim[0])+(xyz[1]-xyzPrim[1])*(xyz[1]-xyzPrim[1]));
          if(signLxy<0.){
-           decLengthXY[jj]*=-1.;
+           //decLengthXY[jj]*=-1.;
+           decLengthXY[jj] = TMath::Abs(decLengthXY[jj]);
          }
+         // TMP by SV
+         Printf("*** SARA %d %f (sign %f)", jj, decLengthXY[jj],signLxy);
         
          fTagger->GetVtxPxy(vtx,vtxP);
          //vtxPt=TMath::Sqrt(vtxP[0]*vtxP[0]+vtxP[1]*vtxP[1]);

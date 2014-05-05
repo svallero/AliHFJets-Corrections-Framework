@@ -35,8 +35,8 @@ AliAnalysisTaskSEHFJets* AddTaskSEHFJets(TString fileout="standard",Bool_t corre
 
   //Set the jets branch
   // radius is hardcoded here, should be changed TODO
-  hfTask->SetRecoJetsBranch("JetClusterAOD_ANTIKT04_B0_Filter00272_Cut00150_Skip00");
-  hfTask->SetMcJetsBranch("JetClusterAODMC2_ANTIKT04_B0_Filter00272_Cut00150_Skip00"); // full eta
+  hfTask->SetRecoJetsBranch("JetClusterAOD_ANTIKT04_B0_Filter00768_Cut00150_Skip00");
+  hfTask->SetMcJetsBranch("JetClusterAODMC2_ANTIKT04_B0_Filter00768_Cut00150_Skip00"); // full eta
 
   // Define the tagger
   AliHFJetsTaggingVertex *tagger=new AliHFJetsTaggingVertex();
@@ -83,6 +83,8 @@ void DefineCutsTask(AliAnalysisTaskSEHFJets *task, Float_t minC, Float_t maxC){
 
     // define cuts for task
     AliRDHFJetsCuts *cuts=new AliRDHFJetsCuts();
+    // TMP by SV for jet-jet production
+    //cuts->SetFilterMask(0);
     // jets
     cuts->SetJetRadius(0.4); // this cut does nothing
     cuts->SetMaxEtaJet(0.5);//0.9-R
@@ -103,7 +105,6 @@ void DefineCutsTagger(AliHFJetsTaggingVertex *tg){
     // 2) AliRDHFJetsCutsVertex: cuts to reconstruct vertices
     // (nprong, pT jet, eta, R, pTmin tracks, electron ID, displacement and other cut variables)
     AliRDHFJetsCutsVertex *cuts2=new AliRDHFJetsCutsVertex("jetCuts");
-
     // jets
     cuts2->SetJetRadius(0.4);
     cuts2->SetMaxEtaJet(0.5);//0.9-R

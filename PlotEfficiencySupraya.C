@@ -15,8 +15,8 @@ void PlotEfficiencySupraya(Float_t mass=0.,Int_t partonmethod=2, Float_t pt=10. 
 
   TString outdir="plots_test";
   //TFile* f=new TFile("AnalysisResults.root","r");
-  TFile* f1=new TFile("outputsLHC13d18d/AnalysisResults_NEW_TRC1_MM2_FB768.root","r"); // good for matching eff.
-  TFile* f2=new TFile("outputsLHC13d18d/AnalysisResults_NEW_TRC1_MM2_FB272.root","r");
+  TFile* f2=new TFile("outputsLHC13d18d/AnalysisResults_NEW_TRC1_MM2_FB768.root","r"); // good for matching eff.
+  TFile* f1=new TFile("outputsLHC13d18d/AnalysisResults_NEW_TRC1_MM2_FB272.root","r");
   //TFile* f2=new TFile("outputsLHC13d18d/AnalysisResults_NEW_TRC0_MM1_FB768.root","r"); // good for matching eff.
   //TFile* f1=new TFile("outputsLHC13d18d/AnalysisResults_NEW_TRC0_MM1_FB272.root","r");
 
@@ -94,7 +94,7 @@ void PlotEfficiencySupraya(Float_t mass=0.,Int_t partonmethod=2, Float_t pt=10. 
   hfcontJetsVtx->SetAxisRangeStep("mass1", 2., -1,step, kTRUE);
   // Set Lxy1 range
   // in this way you exclude underflow
-  //hfcontJetsVtx->SetAxisRangeStep("Lxy1", 0.06, -1,step, kTRUE); // include overflow
+  hfcontJetsVtx->SetAxisRangeStep("Lxy1", 0.06, -1,step, kTRUE); // include overflow
   //hfcontJetsVtx2->SetAxisRangeStep("Lxy1", 0.4, -1,step, kTRUE); // include overflow
 
   // Set parton range B

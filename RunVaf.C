@@ -25,7 +25,7 @@ void RunVaf(){
   // just one run
   //TString dataset=("Find;BasePath=/alice/sim/2013/LHC13d18d/126082;FileName=AOD/*/AliAOD.root");
   // all runs
-  TString dataset=("Find;BasePath=/alice/sim/2013/LHC13d18d/;FileName=AOD/*/AliAOD.root");
+  TString dataset=("Find;BasePath=/alice/sim/2013/LHC13d18d_plus/;FileName=AOD/*/AliAOD.root");
 
   TChain *chainAOD = 0;
   switch (mode){
@@ -96,8 +96,8 @@ void RunVaf(){
 //------------------------------------------------------------------
 void AddTaskJetFinder(){
 
-  Int_t kHighPtFilterMask = 272;
-  //Int_t kHighPtFilterMask = 768;
+  //Int_t kHighPtFilterMask = 272;
+  Int_t kHighPtFilterMask = 768;
   UInt_t iPhysicsSelectionFlag = AliVEvent::kAny;
   Float_t fTrackEtaWindow = 0.9;
   gROOT->LoadMacro("AddTaskJetCluster.C");

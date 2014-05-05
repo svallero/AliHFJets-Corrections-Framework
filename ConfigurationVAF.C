@@ -3,24 +3,28 @@ Long64_t nentries=123567890,firstentry=0;
 TString loadMacroPath="$ALICE_ROOT/PWGHF/vertexingHF/macros/";
 
 // GRID ---------------------------
-TString dataset="LHC13d18e_plus";
+//TString dataset="LHC13d18e_plus";
+TString dataset="LHC11a1d";
 TString user="svallero";
 TString pluginmode="terminate";
-//TString name=Form("AnalysisBjets_%s", dataset.Data());
-TString name="AnalysisBjets";
+TString name=Form("AnalysisBjets_%s", dataset.Data());
+//TString name="AnalysisBjets";
 // packages
 TString api="V1.1x";
 TString root="v5-34-11";
-TString aliroot="v5-05-45-AN";
+TString aliroot="v5-05-77-AN";
 TString boost="boost::v1_43_0";
 TString cgal="cgal::v3.6";
 TString fastjet="fastjet::v2.4.2";
 // data
 //TString datadir="/alice/sim/2013/LHC13d18d";
-TString datadir=Form("/alice/sim/2013/%s",dataset.Data());
-TString datapattern="AOD/*AliAOD.root";
+//TString datadir=Form("/alice/sim/2013/%s",dataset.Data());
+TString datadir=Form("/alice/sim/%s",dataset.Data());
+//TString datapattern="AOD/*AliAOD.root";
+TString datapattern="*/AliAOD.root";
 //TString runs="126082";
-TString runs="126081 126082 126088 126090 126097 126158 126160 126167 126168 126283 126284 126350 126351 126352 126359 126404 126406 126407 126408 126409 126422 126424 126425 126432 126437";
+TString runs="126007";
+//TString runs="126081 126082 126088 126090 126097 126158 126160 126167 126168 126283 126284 126350 126351 126352 126359 126404 126406 126407 126408 126409 126422 126424 126425 126432 126437";
 
 
 // --- include path --------------- 
@@ -42,15 +46,16 @@ TString sources=("AliRDHFJetsCuts AliRDHFJetsCutsVertex AliHFJetsTagging AliHFJe
 void AddTasks(){
 
   // JetFinder 
-  Int_t kHighPtFilterMask = 272;
-  UInt_t iPhysicsSelectionFlag = AliVEvent::kAny; 
+  Int_t kHighPtFilterMask = 768;
+  //UInt_t iPhysicsSelectionFlag = AliVEvent::kAny; 
+  UInt_t iPhysicsSelectionFlag = 0; 
   Float_t fTrackEtaWindow = 0.9;  
 
   gROOT->LoadMacro("AddTaskJetCluster.C");
   AliAnalysisTaskJetCluster *taskCl = 0;
-  taskCl = AddTaskJetCluster("AOD","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.4,0,kTRUE,"",0.15,fTrackEtaWindow);
+  taskCl = AddTaskJetCluster("AOD","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.4,0,kTRUE,"AliAOD.Jets.root",0.15,fTrackEtaWindow);
   // MC charged with full eta window (5)
-  taskCl = AddTaskJetCluster("AODMC2","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.4,0,kTRUE,"",0.15,fTrackEtaWindow);
+  taskCl = AddTaskJetCluster("AODMC2","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.4,0,kTRUE,"AliAOD.Jets.root",0.15,fTrackEtaWindow);
   // MC charged with restricted eta window
   //taskCl = AddTaskJetCluster("AODMC2b","",kHighPtFilterMask,iPhysicsSelectionFlag,"ANTIKT",0.4,0,kTRUE,"",0.15,fTrackEtaWindow);
 
