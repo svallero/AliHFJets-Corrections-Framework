@@ -34,6 +34,8 @@ void Color(TH1 *histo, Int_t color, Int_t marker = 20){
 	histo->SetMarkerColor(color);
 	histo->SetLineColor(color);
 	histo->SetLineWidth(2);
+	histo->SetFillColor(color);
+	histo->SetFillStyle(3003);
 
 	histo->GetXaxis()->SetTitleOffset(1.2);
 	histo->GetYaxis()->SetTitleOffset(1.2);
@@ -48,7 +50,7 @@ void LineStyle(TH1 *histo, Int_t color){
 TCanvas *CreateCanvas(const char *title, Bool_t kPads = kTRUE){
 	TCanvas *canvas = new TCanvas(title,title,0,22,919,691);
 	canvas->Range(0, 0, 1, 1);
-	//canvas->SetLogy();
+	canvas->SetLogy();
 	SetStyle();
 	if(kPads) CreatePads();
 	gPad->SetGrid();	
@@ -115,8 +117,8 @@ void SetStyle(){
 	gPad->SetBorderSize(2);
 	//gPad->SetGridy();
 	gStyle->SetOptTitle(0);
-	gStyle->SetOptStat(111111);
-	//gStyle->SetOptStat(0);
+	//gStyle->SetOptStat(111111);
+	gStyle->SetOptStat(0);
 	gStyle->SetPalette(1);
 	gStyle->SetTitleBorderSize(0);
 	gStyle->SetTitleFillColor(0);

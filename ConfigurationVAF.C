@@ -4,9 +4,9 @@ TString loadMacroPath="$ALICE_ROOT/PWGHF/vertexingHF/macros/";
 
 // GRID ---------------------------
 //TString dataset="LHC13d18e_plus";
-TString dataset="LHC11a1d";
+TString dataset="LHC11a2d";
 TString user="svallero";
-TString pluginmode="terminate";
+TString pluginmode="test";
 TString name=Form("AnalysisBjets_%s", dataset.Data());
 //TString name="AnalysisBjets";
 // packages

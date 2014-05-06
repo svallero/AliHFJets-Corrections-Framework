@@ -488,11 +488,11 @@ void AliHFJetsContainerVertex::FillStepJetVtx(AliHFJetsContainer::CFSteps step, 
 
          decLengthXY[jj]=TMath::Sqrt((xyz[0]-xyzPrim[0])*(xyz[0]-xyzPrim[0])+(xyz[1]-xyzPrim[1])*(xyz[1]-xyzPrim[1]));
          if(signLxy<0.){
-           //decLengthXY[jj]*=-1.;
-           decLengthXY[jj] = TMath::Abs(decLengthXY[jj]);
+           decLengthXY[jj]*=-1.;
+           //decLengthXY[jj] = TMath::Abs(decLengthXY[jj]);
          }
          // TMP by SV
-         Printf("*** SARA %d %f (sign %f)", jj, decLengthXY[jj],signLxy);
+         //Printf("*** SARA %d %f (sign %f)", jj, decLengthXY[jj],signLxy);
         
          fTagger->GetVtxPxy(vtx,vtxP);
          //vtxPt=TMath::Sqrt(vtxP[0]*vtxP[0]+vtxP[1]*vtxP[1]);
