@@ -123,13 +123,13 @@ AliAnalysisGrid* CreateAlienHandler(){
   gROOT->LoadMacro(Form("%s/AddGoodRuns.C",reducedpath.Data()));
   plugin->SetGridDataDir(datadir.Data());
   plugin->SetDataPattern(datapattern.Data()); // specify AOD set
-  TObjArray *arr;
-  TObjString *objstr;
-  arr = runs.Tokenize(" ");
-  TIter next(arr);
-  while ((objstr=(TObjString*)next())){
-    plugin->AddRunNumber((objstr->GetString()).Data());  
-  }
+  //TObjArray *arr;
+  //TObjString *objstr;
+  //arr = runs.Tokenize(" ");
+  //TIter next(arr);
+  //while ((objstr=(TObjString*)next())){
+    //plugin->AddRunNumber((objstr->GetString()).Data());  
+  //}
 
   // Analysis sources
   TString allsources=" ";
@@ -170,7 +170,8 @@ AliAnalysisGrid* CreateAlienHandler(){
   plugin->AddIncludePath(includepath.Data());
 
   // Merging
-  plugin->SetMergeViaJDL(kTRUE); 
+  if (!pluginmode.Contains("terminate")) jdl_merge = kFALSE;
+  plugin->SetMergeViaJDL(jdl_merge); 
   plugin->SetOneStageMerging(kFALSE);
   plugin->SetMaxMergeStages(5);
   plugin->SetSplitMaxInputFileNumber(10);
